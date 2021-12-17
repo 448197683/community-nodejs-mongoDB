@@ -9,12 +9,11 @@
     <%- include("./components/NAVBAR.ejs") %>
     <div class="container">
       <div class="editProfile-wrapper">
-        <div>
+        <div class="avatarImage">
           <img
             id="avatarImage"
             src="<%=locals.user.avatarURL%>"
             alt=""
-            style="width: 100px"
           />
         </div>
         <h1 id="message"><%=locals.message%></h1>
@@ -23,6 +22,7 @@
           method="post"
           enctype="multipart/form-data"
         >
+        <div>
           <input
             type="email"
             id="email"
@@ -39,18 +39,21 @@
             value="<%=locals.user.nickname%>"
             required
           />
+        </div>
+          <input type="file" id="avatar" name="avatar" accept="image/*" />
+       <div>
           <select name="gender" id="gender">
             <option <%=locals.user.gender===""?"selected":""%> value="">Choose...</option>
             <option <%=locals.user.gender==="male"?"selected":""%> value="male">Male</option>
             <option <%=locals.user.gender==="female"?"selected":""%> value="female">Female</option>
           </select>
-          <input type="file" id="avatar" name="avatar" accept="image/*" />
           <input
             type="date"
             id="birth"
             name="birth"
             value="<%=locals.user.birth%>"
           />
+      </div>
           <input type="submit" id="submit" value="UPDATE PROFILE" />
         </form>
       </div>

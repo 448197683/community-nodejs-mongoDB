@@ -289,7 +289,16 @@ export const getEditProfileController = (req, res) => {
 };
 
 export const postEditProfileController = async (req, res) => {
-  const { email, nickname, gender, birth } = req.body;
+  console.log(req.file);
+  let avatar = '';
+  if (!req.file && !req.session.user.avatarURL) {
+    avatar = '';
+  } else if (!req.file && req.session.user.avatarURL) {
+    avatar = req.session.user.avatarURL;
+  } else if (req.file) {
+    avatar = '/' + req.file.path;
+  }
+  let { email, nickname, gender, birth } = req.body;
   if (
     email === req.session.user.email &&
     nickname === req.session.user.nickname
@@ -298,7 +307,13 @@ export const postEditProfileController = async (req, res) => {
       const updateProfile = await db.collection('users').updateOne(
         { email: req.session.user.email },
         {
-          $set: { email: email, nickname: nickname, gender, birth },
+          $set: {
+            email: email,
+            nickname: nickname,
+            gender,
+            birth,
+            avatarURL: avatar,
+          },
         }
       );
       req.session.user = await db.collection('users').findOne({ email });
@@ -310,17 +325,35 @@ export const postEditProfileController = async (req, res) => {
 
   try {
     const checkEmail = await db.collection('users').findOne({ email });
-    if (checkEmail) {
-      return res.status(400).render('editProfile.ejs', {
-        message: `EAMIL ${email} ALREADY EXISTS`,
-      });
-    }
     const checkNickname = await db.collection('users').findOne({ nickname });
-    if (checkNickname) {
-      return res.status(400).render('editProfile.ejs', {
-        message: `NICKNAME ${nickname} ALREADY EXISTS`,
-      });
+    if (email !== req.session.user.email && checkEmail) {
+      return res
+        .status(400)
+        .render('editProfile', { message: `EMAILE ALREADY EXISTS` });
+    } else if (email === req.session.user.nickname) {
+      email = req.session.user.email;
     }
+    if (nickname !== req.session.user.nickname && checkNickname) {
+      return res
+        .status(400)
+        .render('editProfile', { message: `NICKNAME ALREADY EXISTS` });
+    } else if (nickname === req.session.user.nickname) {
+      nickname = req.session.user.nickname;
+    }
+    const updateProfile = await db.collection('users').updateOne(
+      { email: req.session.user.email },
+      {
+        $set: {
+          email: email,
+          nickname: nickname,
+          gender,
+          birth,
+          avatarURL: avatar,
+        },
+      }
+    );
+    req.session.user = await db.collection('users').findOne({ email });
+    return res.status(300).redirect('/user/profile');
   } catch (error) {
     console.log(error);
   }
