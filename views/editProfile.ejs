@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <%- include("./components/HEAD.ejs")%>
+    <script defer src="/public/js/editProfile.js"></script>
+    <title>Code:Me editProfile</title>
+  </head>
+  <body>
+    <%- include("./components/NAVBAR.ejs") %>
+    <div class="container">
+      <div class="editProfile-wrapper">
+        <div>
+          <img
+            id="avatarImage"
+            src="<%=locals.user.avatarURL%>"
+            alt=""
+            style="width: 100px"
+          />
+        </div>
+        <h1 id="message"><%=locals.message%></h1>
+        <form
+          action="/user/editProfile"
+          method="post"
+          enctype="multipart/form-data"
+        >
+          <input
+            type="email"
+            id="email"
+            name="email"
+            placeholder="Write your email"
+            value="<%=locals.user.email%>"
+            required
+          />
+          <input
+            type="text"
+            id="nickname"
+            name="nickname"
+            placeholder="Write your Nickname"
+            value="<%=locals.user.nickname%>"
+            required
+          />
+          <select name="gender" id="gender">
+            <option <%=locals.user.gender===""?"selected":""%> value="">Choose...</option>
+            <option <%=locals.user.gender==="male"?"selected":""%> value="male">Male</option>
+            <option <%=locals.user.gender==="female"?"selected":""%> value="female">Female</option>
+          </select>
+          <input type="file" id="avatar" name="avatar" accept="image/*" />
+          <input
+            type="date"
+            id="birth"
+            name="birth"
+            value="<%=locals.user.birth%>"
+          />
+          <input type="submit" id="submit" value="UPDATE PROFILE" />
+        </form>
+      </div>
+    </div>
+  </body>
+</html>

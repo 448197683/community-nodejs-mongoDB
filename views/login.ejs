@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <%- include("./components/HEAD.ejs")%>
+    <title>Code:Me LOGIN</title>
+  </head>
+  <body>
+    <%- include("./components/NAVBAR.ejs") %>
+    <div class="container">
+      <h4><%=locals.error%></h4>
+      <form action="/user/login" method="post">
+        <input type="email" name="email" />
+        <input type="password" name="password" />
+        <input type="submit" value="LOGIN" />
+      </form>
+    </div>
+    <!-- SOCIAL LOGIN -->
+
+    <div>
+      <a href="/user/github/start"><button>GITHUB LOGIN</button></a>
+    </div>
+    <div>
+      <a href="/user/google/start"><button>GOOGLE LOGIN</button></a>
+    </div>
+  </body>
+</html>

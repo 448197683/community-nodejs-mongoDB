@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <%- include("./components/HEAD.ejs")%>
+    <title>Code:Me COMMUNITY</title>
+  </head>
+  <body>
+    <%- include("./components/NAVBAR.ejs") %>
+    <div class="container">
+      <h2>Community</h2>
+      <div>sort by : New Popular</div>
+      <ul class="articleWrapper">
+        <%datas.forEach((data)=>{ %>
+        <a href="">
+          <li class="article">
+            <%=data.title%>
+            <div>by moya 2days ago 💬3 👍5 👎2 👀20 views</div>
+          </li>
+        </a>
+        <%})%>
+      </ul>
+      <div class="pageNation">
+        1 2 3 4
+        <a href="/community/article"><button>Write a Post</button></a>
+      </div>
+    </div>
+  </body>
+</html>
