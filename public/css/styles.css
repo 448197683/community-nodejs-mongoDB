@@ -23,6 +23,10 @@ h4 {
   margin-top: 160px;
   color: black; }
 
+.flash-error {
+  color: red;
+  font-weight: 800; }
+
 /* COMONENTS */
 /* NAV BAR  */
 .navbar {
@@ -220,3 +224,26 @@ h4 {
     width: 100%;
     height: 100%;
     object-fit: cover; }
+  .editProfile-wrapper input {
+    padding: 10px;
+    border: none;
+    outline: none;
+    border: 1px solid rgba(0, 0, 0, 0.3);
+    border-radius: 10px;
+    margin: 5px;
+    font-size: 16px; }
+  .editProfile-wrapper #avatar {
+    padding: 0; }
+  .editProfile-wrapper ::-webkit-file-upload-button {
+    border: none;
+    color: white;
+    background-color: gray;
+    padding: 11px 10px;
+    outline: none; }
+  .editProfile-wrapper ::-webkit-file-upload-button:hover {
+    background-color: tomato; }
+  .editProfile-wrapper #gender {
+    font-size: 16px;
+    border-radius: 10px;
+    padding: 9.8px 20px;
+    border: 1px solid rgba(0, 0, 0, 0.3); }

@@ -11,8 +11,13 @@
     <div class="container">
       <div class="join-wrapper">
         <div><img id="avatarImage" src="" alt="" style="width: 50px" /></div>
-        <h1 id="message"><%=locals.message%></h1>
         <form action="/user/join" method="post" enctype="multipart/form-data">
+          <label for="email"
+            >Email
+            <span class="flash-error"
+              ><%=locals.messages.emailError%></span
+            ></label
+          ><br />
           <input
             type="email"
             id="email"
@@ -20,6 +25,12 @@
             placeholder="Write your email"
             required
           />
+          <label for="nickname"
+            >Nickname
+            <span class="flash-error"
+              ><%=locals.messages.nickNameError%></span
+            ></label
+          >
           <input
             type="text"
             id="nickname"
@@ -27,6 +38,12 @@
             placeholder="Write your Nickname"
             required
           />
+          <label for="password"
+            >Password
+            <span class="flash-error"
+              ><%=locals.messages.passwordError%></span
+            ></label
+          >
           <input
             type="password"
             id="password"
@@ -41,7 +58,6 @@
             placeholder="Password2"
             required
           />
-          <span id="passwordError"></span>
           <select name="gender" id="gender">
             <option selected value="">Choose...</option>
             <option value="male">Male</option>

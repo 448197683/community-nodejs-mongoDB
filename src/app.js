@@ -4,6 +4,7 @@ import { communityRouter } from './routers/communityRouter';
 import { userRouter } from './routers/userRouter';
 import { resLocals } from './middleware/middleware';
 import session from 'express-session';
+import flash from 'express-flash';
 
 export const app = express();
 
@@ -19,6 +20,7 @@ app.use(
     saveUninitialized: false,
   })
 );
+app.use(flash());
 app.use(resLocals);
 
 app.use('/', rootRouter);

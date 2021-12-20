@@ -3,7 +3,6 @@ import bcrypt from 'bcrypt';
 import fs from 'fs';
 import path from 'path';
 import fetch from 'cross-fetch';
-import { restart } from 'nodemon';
 
 export const getJoinController = (req, res) => {
   return res.status(200).render('join.ejs');
@@ -28,8 +27,8 @@ export const postJoinController = async (req, res) => {
     if (!fileURL) {
       deleteAvatar(fileURL);
     }
-
-    return res.status(400).render('join.ejs', { message: 'PASSWORD ERROR' });
+    req.flash('passwordError', 'PASSWORD ERROR');
+    return res.status(400).redirect('/user/join');
   }
 
   const user = await db.collection('users').findOne({ email });
@@ -37,9 +36,8 @@ export const postJoinController = async (req, res) => {
     if (!fileURL) {
       deleteAvatar(fileURL);
     }
-    return res
-      .status(400)
-      .render('join.ejs', { message: `EMAIL ${email} ALREADY EXISTS` });
+    req.flash('emailError', `${email} ALREADY EXISTS`);
+    return res.status(400).redirect('/user/join');
   }
 
   const nicknameCheck = await db.collection('users').findOne({ nickname });
@@ -47,11 +45,9 @@ export const postJoinController = async (req, res) => {
     if (!fileURL) {
       deleteAvatar(fileURL);
     }
-    return res
-      .status(400)
-      .render('join.ejs', { message: `NICKNAME ${nickname}  ALREADY EXISTS` });
+    req.flash('nickNameError', `${nickname}  ALREADY EXISTS`);
+    return res.status(400).redirect('/user/join');
   }
-
   try {
     const hashedPassword = bcrypt.hashSync(password, 5);
     let avatarURL = '';
@@ -82,9 +78,8 @@ export const postLoginController = async (req, res) => {
   try {
     const user = await db.collection('users').findOne({ email });
     if (!user) {
-      return res
-        .status(400)
-        .render('login.ejs', { error: "Email doesn't exist" });
+      req.flash('emailError', "Email doesn't exist");
+      return res.status(400).redirect('/user/login');
     }
 
     if (user.socialOnly === true) {
@@ -98,7 +93,8 @@ export const postLoginController = async (req, res) => {
       req.session.user = user;
       return res.status(200).redirect('/');
     } else {
-      return res.status(400).render('login.ejs', { error: 'Password Error' });
+      req.flash('passwordError', 'Password Error');
+      return res.status(400).redirect('/user/login');
     }
   } catch (error) {
     console.log(error);
@@ -113,7 +109,7 @@ export const getLogoutController = (req, res) => {
 
 /* =======================GITHUB LOGIN====================== */
 
-export const gihubStartController = (req, res) => {
+export const githubStartController = (req, res) => {
   const baseURL = `https://github.com/login/oauth/authorize?`;
   const config = {
     client_id: process.env.GITHUB_ID,
@@ -289,7 +285,26 @@ export const getEditProfileController = (req, res) => {
 };
 
 export const postEditProfileController = async (req, res) => {
+  try {
+    const currentPassword = req.body.password;
+    const currentUser = await db
+      .collection('users')
+      .findOne({ email: req.session.user.email });
+    const hashedPassword = currentUser.password;
+    const checkPassword = bcrypt.compareSync(currentPassword, hashedPassword);
+    if (!checkPassword) {
+      req.flash('passwordError', 'Pawssword Error');
+      return res.status(400).redirect('/user/editProfile');
+    }
+  } catch (error) {
+    console.log(error);
+  }
+
   console.log(req.file);
+  let fileURL;
+  if (req.file) {
+    fileURL = path.resolve(__dirname, '..', '..', `${req.file.path}`);
+  }
   let avatar = '';
   if (!req.file && !req.session.user.avatarURL) {
     avatar = '';
@@ -316,6 +331,17 @@ export const postEditProfileController = async (req, res) => {
           },
         }
       );
+      if (req.file && req.session.user.avatarURL) {
+        /* delete */
+        const imgURL = path.resolve(
+          __dirname,
+          '..',
+          '..',
+          `${req.session.user.avatarURL.substring(1)}`
+        );
+        deleteAvatar(imgURL);
+      }
+
       req.session.user = await db.collection('users').findOne({ email });
       return res.status(300).redirect('/user/profile');
     } catch (error) {
@@ -327,16 +353,14 @@ export const postEditProfileController = async (req, res) => {
     const checkEmail = await db.collection('users').findOne({ email });
     const checkNickname = await db.collection('users').findOne({ nickname });
     if (email !== req.session.user.email && checkEmail) {
-      return res
-        .status(400)
-        .render('editProfile', { message: `EMAILE ALREADY EXISTS` });
+      req.flash('emailError', 'EMAIL ALREADY EXISTS');
+      return res.status(300).redirect('/user/editProfile');
     } else if (email === req.session.user.nickname) {
       email = req.session.user.email;
     }
     if (nickname !== req.session.user.nickname && checkNickname) {
-      return res
-        .status(400)
-        .render('editProfile', { message: `NICKNAME ALREADY EXISTS` });
+      req.flash('nickNameError', 'NICKNAME ALREADY EXISTS');
+      return res.status(300).redirect('/user/editProfile');
     } else if (nickname === req.session.user.nickname) {
       nickname = req.session.user.nickname;
     }
@@ -352,9 +376,28 @@ export const postEditProfileController = async (req, res) => {
         },
       }
     );
+    if (req.file && req.session.user.avatarURL) {
+      /* delete */
+      const imgURL = path.resolve(
+        __dirname,
+        '..',
+        '..',
+        `${req.session.user.avatarURL.substring(1)}`
+      );
+      deleteAvatar(imgURL);
+    }
     req.session.user = await db.collection('users').findOne({ email });
     return res.status(300).redirect('/user/profile');
   } catch (error) {
     console.log(error);
   }
+};
+
+/* =============change password =================== */
+export const getChangePasswordController = (req, res) => {
+  return res.status(200).render('changePassword.ejs');
+};
+
+export const putChangePasswordController = (req, res) => {
+  console.log(req.body);
 };

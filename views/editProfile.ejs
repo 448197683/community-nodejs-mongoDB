@@ -16,13 +16,13 @@
             alt=""
           />
         </div>
-        <h1 id="message"><%=locals.message%></h1>
         <form
           action="/user/editProfile"
           method="post"
           enctype="multipart/form-data"
         >
         <div>
+          <p><%=locals.messages.emailError%></p>
           <input
             type="email"
             id="email"
@@ -31,6 +31,7 @@
             value="<%=locals.user.email%>"
             required
           />
+          <p><%=locals.messages.nickNameError%></p>
           <input
             type="text"
             id="nickname"
@@ -53,9 +54,19 @@
             name="birth"
             value="<%=locals.user.birth%>"
           />
+          <%if(locals.user.socialOnly===false){%>
+          <div>
+            <%=locals.messages.passwordError%>
+            <label for="password">Plese Confirm Password</label><br>
+            <input type="password" id="password" name="password" placeholder="Plese Confirm Password">
+          </div>
+          <%}%>
       </div>
           <input type="submit" id="submit" value="UPDATE PROFILE" />
         </form>
+        <a href="/user/changePassword">
+        <button>Change Password</button>
+      </a>
       </div>
     </div>
   </body>

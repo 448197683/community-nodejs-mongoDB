@@ -7,9 +7,10 @@
   <body>
     <%- include("./components/NAVBAR.ejs") %>
     <div class="container">
-      <h4><%=locals.error%></h4>
       <form action="/user/login" method="post">
+        <p><%=locals.messages.emailError%></p>
         <input type="email" name="email" />
+        <p><%=locals.messages.passwordError%></p>
         <input type="password" name="password" />
         <input type="submit" value="LOGIN" />
       </form>
