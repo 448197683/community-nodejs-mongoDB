@@ -398,6 +398,48 @@ export const getChangePasswordController = (req, res) => {
   return res.status(200).render('changePassword.ejs');
 };
 
-export const putChangePasswordController = (req, res) => {
-  console.log(req.body);
+export const putChangePasswordController = async (req, res) => {
+  const { currentPassword, newPassword } = req.body;
+  if (currentPassword === '') {
+    try {
+      await db.collection('users').updateOne(
+        { email: req.session.user.email },
+        {
+          $set: {
+            password: bcrypt.hashSync(newPassword, 5),
+            socialOnly: false,
+          },
+        }
+      );
+      req.session.user.socialOnly = false;
+      req.flash('message', 'Password Update Success');
+      return res.status(200).end();
+    } catch (error) {
+      console.log(error);
+    }
+  }
+  try {
+    const user = await db
+      .collection('users')
+      .findOne({ email: req.session.user.email });
+    const userPassword = user.password;
+    const checkPassword = bcrypt.compareSync(currentPassword, userPassword);
+    if (!checkPassword) {
+      req.flash('message', 'Password Error');
+      return res.status(400).end();
+    }
+    const updatePassword = await db.collection('users').updateOne(
+      { email: req.session.user.email },
+      {
+        $set: {
+          password: bcrypt.hashSync(newPassword, 5),
+        },
+      }
+    );
+
+    req.flash('message', 'Password Update Success');
+    return res.status(200).end();
+  } catch (error) {
+    console.log(error);
+  }
 };
