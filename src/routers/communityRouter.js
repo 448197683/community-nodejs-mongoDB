@@ -1,12 +1,16 @@
 import express from 'express';
 import {
   communityController,
-  getAritcleController,
-  postAritcleController,
+  getWriteAritcleController,
+  postWriteAritcleController,
+  getArticleController,
 } from '../controllers/communityController';
+
+import { loginOnly, logoutOnly } from '../middleware/middleware.js';
 
 export const communityRouter = express.Router();
 
 communityRouter.get('/community', communityController);
-communityRouter.get('/article', getAritcleController);
-communityRouter.post('/article', postAritcleController);
+communityRouter.get('/writeArticle', loginOnly, getWriteAritcleController);
+communityRouter.post('/writeArticle', loginOnly, postWriteAritcleController);
+communityRouter.get('/article/:id', getArticleController);

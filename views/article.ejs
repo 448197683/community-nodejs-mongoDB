@@ -6,5 +6,12 @@
   </head>
   <body>
     <%- include("./components/NAVBAR.ejs") %>
+    <div class="container">
+      <div>
+        <%- include("./components/POST.ejs")%>
+        <div><%=data.content%></div>
+        <hr />
+      </div>
+    </div>
   </body>
 </html>

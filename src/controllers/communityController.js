@@ -10,17 +10,20 @@ export const communityController = async (req, res) => {
   }
 };
 
-export const getAritcleController = (req, res) => {
+export const getWriteAritcleController = (req, res) => {
   console.log(req.session);
   res.status(200).render('writeArticle.ejs');
 };
-export const postAritcleController = async (req, res) => {
+export const postWriteAritcleController = async (req, res) => {
   console.log(req.body);
+  const currentTime = new Date();
   try {
     const saveArticle = await db.collection('community').insertOne({
       title: req.body.title,
       content: req.body.content,
       _id: counter.count + 1,
+      owner: req.session.user.nickname,
+      createdAt: currentTime.getTime(),
     });
     counter.count = counter.count + 1;
     const updateCounter = await db.collection('counter').updateOne(
@@ -30,6 +33,19 @@ export const postAritcleController = async (req, res) => {
       }
     );
     res.status(300).redirect(`/community/community`);
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+export const getArticleController = async (req, res) => {
+  console.log(req.params);
+  try {
+    const post = await db
+      .collection('community')
+      .findOne({ _id: Number(req.params.id) });
+    console.log(post);
+    return res.status(200).render('article.ejs', { data: post });
   } catch (error) {
     console.log(error);
   }
