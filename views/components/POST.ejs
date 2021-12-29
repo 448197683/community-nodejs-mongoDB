@@ -4,6 +4,13 @@
     <div>
       by<span> <%=data.owner%></span> <span><%=data.createdAt%></span> ago 💬3
       👍5 👎2 👀20 views
+      <div id="avatarBox">
+        <%if(data.avatarURL){%>
+        <img src="<%=data.avatarURL%>" alt="" />
+        <%}else{%>
+        <img src="/public/images/nouser.png" alt="" />
+        <%}%>
+      </div>
     </div>
   </li>
 </a>

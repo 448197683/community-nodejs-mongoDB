@@ -38,7 +38,7 @@
 
   <div class="popupProfile">
     <div class="profile">
-      <a href="/user/profile">
+      <a href="/user/profile/<%=locals.user.nickname%>">
         <%if(locals.user.avatarURL){%>
         <img src="<%=locals.user.avatarURL%>" alt="" />
         <%}else{%>

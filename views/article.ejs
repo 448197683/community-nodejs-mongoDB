@@ -2,16 +2,30 @@
 <html lang="en">
   <head>
     <%- include("./components/HEAD.ejs")%>
+    <script defer src="/public/js/article.js"></script>
     <title>Code:Me Article</title>
   </head>
   <body>
     <%- include("./components/NAVBAR.ejs") %>
     <div class="container">
-      <div>
-        <%- include("./components/POST.ejs")%>
-        <div><%=data.content%></div>
-        <hr />
-      </div>
+        <li class="article" data-id="<%=data._id%>">
+          <%=data.title%>
+          <div>
+            by<span><a href="/user/profile/<%=data.owner%>"> <%=data.owner%></span></a> <span><%=data.createdAt%></span> ago
+            💬3 👍5 👎2 👀20 views
+            <div id="avatarBox"> <a href="/user/profile/<%=data.owner%>"> <%if(data.avatarURL){%>
+              <img src="<%=data.avatarURL%>" alt="" />
+              <%}else{%>
+              <img src="/public/images/nouser.png" alt="" />
+              <%}%></a></div>
+            <p id="content"><%=data.content%></p>
+          </div>
+        </li>
+        <%if(locals.user.nickname===locals.data.owner){%>
+        <div><button id="editBtn">Edit Post</button>
+          <button id="deleteBtn">Delete Post</button>
+        </div>
+        <%}%>
     </div>
   </body>
 </html>

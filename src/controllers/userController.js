@@ -275,8 +275,24 @@ export const googleFinishController = async (req, res) => {
 };
 
 /* USER PROFILE */
-export const getProfileController = (req, res) => {
-  return res.status(200).render('profile.ejs');
+export const getProfileController = async (req, res) => {
+  const owner = req.params.owner;
+  let publicUser;
+  try {
+    if (req.session.isLoggedIn === true) {
+      if (req.session.user.nickname === owner) {
+        return res.status(200).render('profile.ejs');
+      } else {
+        publicUser = await db.collection('users').findOne({ nickname: owner });
+        return res.status(200).render('publicUserProfile.ejs', { publicUser });
+      }
+    } else {
+      publicUser = await db.collection('users').findOne({ nickname: owner });
+      return res.status(200).render('publicUserProfile.ejs', { publicUser });
+    }
+  } catch (error) {
+    console.log(error);
+  }
 };
 
 /* EDIT USER PROFILE */

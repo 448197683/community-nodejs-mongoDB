@@ -33,7 +33,7 @@ userRouter.get('/github/start', githubStartController);
 userRouter.get('/github/callback', githubFinishController);
 userRouter.get('/google/start', googleStartController);
 userRouter.get('/google/callback', googleFinishController);
-userRouter.get('/profile', getProfileController);
+userRouter.get('/profile/:owner', getProfileController);
 userRouter
   .route('/editProfile')
   .get(loginOnly, getEditProfileController)

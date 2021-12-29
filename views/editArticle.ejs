@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <%- include("./components/HEAD.ejs")%>
+    <script defer src="/public/js/editArticle.js"></script>
+    <title>Code:Me HOME</title>
+  </head>
+  <body>
+    <%- include("./components/NAVBAR.ejs") %>
+    <div class="container">
+      <p><%=locals.data.content%></p>
+      <form action="" data-id="<%=locals.data._id%>">
+        <input type="text" value="<%=locals.data.title%>" />
+        <textarea id="content" name="content" rows="5" required></textarea>
+        <button>Submit</button>
+      </form>
+    </div>
+  </body>
+</html>

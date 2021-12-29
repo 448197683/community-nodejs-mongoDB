@@ -24,6 +24,7 @@ export const postWriteAritcleController = async (req, res) => {
       _id: counter.count + 1,
       owner: req.session.user.nickname,
       createdAt: currentTime.getTime(),
+      avatarURL: req.session.user.avatarURL,
     });
     counter.count = counter.count + 1;
     const updateCounter = await db.collection('counter').updateOne(
@@ -46,6 +47,33 @@ export const getArticleController = async (req, res) => {
       .findOne({ _id: Number(req.params.id) });
     console.log(post);
     return res.status(200).render('article.ejs', { data: post });
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+export const deleteArticlecontroller = async (req, res) => {
+  console.log(req.params);
+  try {
+    const deleteArticle = await db
+      .collection('community')
+      .deleteOne({ _id: Number(req.params.id) });
+    return res.status(200).end();
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+export const putArticleCOntroller = async (req, res) => {
+  console.log(req.body);
+};
+
+export const getEditArticleController = async (req, res) => {
+  try {
+    const article = await db
+      .collection('community')
+      .findOne({ _id: Number(req.params.id) });
+    return res.status(200).render('editArticle.ejs', { data: article });
   } catch (error) {
     console.log(error);
   }

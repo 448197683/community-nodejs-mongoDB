@@ -106,7 +106,8 @@ h4 {
   right: 30px;
   background-color: gray;
   border-radius: 10px;
-  padding: 10px; }
+  padding: 10px;
+  z-index: 999; }
 
 .profile {
   width: 60px;
@@ -142,6 +143,34 @@ h4 {
   height: 15px;
   transform: rotate(45deg);
   background-color: gray; }
+
+.articleWrapper {
+  width: 80%; }
+
+.article {
+  border: 1px solid black;
+  list-style: none;
+  padding: 10px;
+  margin-bottom: 15px;
+  border-radius: 10px;
+  box-shadow: 6px 6px 3px rgba(0, 0, 0, 0.2);
+  color: black;
+  position: relative; }
+  .article #avatarBox {
+    position: absolute;
+    width: 50px;
+    height: 50px;
+    overflow: hidden;
+    border-radius: 50%;
+    right: 20px;
+    top: 7px; }
+    .article #avatarBox img {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover; }
 
 /* PAGES */
 .join-wrapper {
@@ -191,18 +220,6 @@ h4 {
     background-color: red; }
 
 /* COMMUNITY */
-.articleWrapper {
-  width: 80%; }
-
-.article {
-  border: 1px solid black;
-  list-style: none;
-  padding: 10px;
-  margin-bottom: 15px;
-  border-radius: 10px;
-  box-shadow: 6px 6px 3px rgba(0, 0, 0, 0.2);
-  color: black; }
-
 /* Write a Article */
 .formWrapper {
   display: flex;
@@ -247,3 +264,11 @@ h4 {
     border-radius: 10px;
     padding: 9.8px 20px;
     border: 1px solid rgba(0, 0, 0, 0.3); }
+
+.article {
+  background-color: beige; }
+  .article a {
+    color: gray; }
+  .article #content {
+    margin-top: 12px;
+    white-space: pre; }
