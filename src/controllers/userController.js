@@ -357,9 +357,10 @@ export const postEditProfileController = async (req, res) => {
         );
         deleteAvatar(imgURL);
       }
-
       req.session.user = await db.collection('users').findOne({ email });
-      return res.status(300).redirect('/user/profile');
+      return res
+        .status(300)
+        .redirect(`/user/profile/${req.session.user.nickname}`);
     } catch (error) {
       console.log(error);
     }
@@ -402,8 +403,12 @@ export const postEditProfileController = async (req, res) => {
       );
       deleteAvatar(imgURL);
     }
+    console.log(`1`, req.session.user);
     req.session.user = await db.collection('users').findOne({ email });
-    return res.status(300).redirect('/user/profile');
+    console.log(`2`, req.session.user);
+    return res
+      .status(300)
+      .redirect(`/user/profile/${req.session.user.nickname}`);
   } catch (error) {
     console.log(error);
   }

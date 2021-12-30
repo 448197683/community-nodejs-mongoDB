@@ -272,3 +272,6 @@ h4 {
   .article #content {
     margin-top: 12px;
     white-space: pre; }
+  .article #goodBtn,
+  .article #badBtn {
+    cursor: pointer; }

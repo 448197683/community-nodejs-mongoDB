@@ -12,7 +12,7 @@
           <%=data.title%>
           <div>
             by<span><a href="/user/profile/<%=data.owner%>"> <%=data.owner%></span></a> <span><%=data.createdAt%></span> ago
-            💬3 👍5 👎2 👀20 views
+            💬3 <span id="goodBtn">👍</span> <span id="goodNum"><%=locals.data.good%></span>   <span id="badBtn">👎</span><span id="badNum">0</span> 👀20 views
             <div id="avatarBox"> <a href="/user/profile/<%=data.owner%>"> <%if(data.avatarURL){%>
               <img src="<%=data.avatarURL%>" alt="" />
               <%}else{%>
@@ -23,7 +23,7 @@
         </li>
         <%if(locals.user.nickname===locals.data.owner){%>
         <div><button id="editBtn">Edit Post</button>
-          <button id="deleteBtn">Delete Post</button>
+          <button id="commentBtn">comment</button>
         </div>
         <%}%>
     </div>

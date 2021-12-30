@@ -25,6 +25,7 @@ export const postWriteAritcleController = async (req, res) => {
       owner: req.session.user.nickname,
       createdAt: currentTime.getTime(),
       avatarURL: req.session.user.avatarURL,
+      good: 0,
     });
     counter.count = counter.count + 1;
     const updateCounter = await db.collection('counter').updateOne(
@@ -74,6 +75,22 @@ export const getEditArticleController = async (req, res) => {
       .collection('community')
       .findOne({ _id: Number(req.params.id) });
     return res.status(200).render('editArticle.ejs', { data: article });
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+/* Add Good */
+export const putAddGoodController = async (req, res) => {
+  console.log(req.params, req.body);
+  try {
+    const addGood = await db.collection('community').updateOne(
+      { _id: Number(req.params.id) },
+      {
+        $set: { good: req.body.goodNum },
+      }
+    );
+    return res.sendStatus(200);
   } catch (error) {
     console.log(error);
   }

@@ -7,6 +7,7 @@ import {
   deleteArticlecontroller,
   putArticleCOntroller,
   getEditArticleController,
+  putAddGoodController,
 } from '../controllers/communityController';
 
 import { loginOnly, logoutOnly } from '../middleware/middleware.js';
@@ -20,3 +21,4 @@ communityRouter.get('/article/:id', getArticleController);
 communityRouter.delete('/article/:id', deleteArticlecontroller);
 communityRouter.put('/article/:id', putArticleCOntroller);
 communityRouter.get('/editArticle/:id', getEditArticleController);
+communityRouter.put('/addGood/:id', putAddGoodController);
