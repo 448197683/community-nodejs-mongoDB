@@ -26,6 +26,7 @@ export const postWriteAritcleController = async (req, res) => {
       createdAt: currentTime.getTime(),
       avatarURL: req.session.user.avatarURL,
       good: 0,
+      bad: 0,
     });
     counter.count = counter.count + 1;
     const updateCounter = await db.collection('counter').updateOne(
@@ -82,14 +83,24 @@ export const getEditArticleController = async (req, res) => {
 
 /* Add Good */
 export const putAddGoodController = async (req, res) => {
-  console.log(req.params, req.body);
+  console.log(req.body.goodNum, req.body.badNum);
   try {
-    const addGood = await db.collection('community').updateOne(
-      { _id: Number(req.params.id) },
-      {
-        $set: { good: req.body.goodNum },
-      }
-    );
+    if (req.body.type === 'good') {
+      const addGood = await db.collection('community').updateOne(
+        { _id: Number(req.params.id) },
+        {
+          $set: { good: req.body.goodNum },
+        }
+      );
+    } else {
+      const addGood = await db.collection('community').updateOne(
+        { _id: Number(req.params.id) },
+        {
+          $set: { bad: req.body.badNum },
+        }
+      );
+    }
+
     return res.sendStatus(200);
   } catch (error) {
     console.log(error);

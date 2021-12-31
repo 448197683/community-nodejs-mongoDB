@@ -10,5 +10,9 @@
   #goodBtn,
   #badBtn {
     cursor: pointer;
+    &:hover {
+      background-color: brown;
+      border-radius: 50%;
+    }
   }
 }

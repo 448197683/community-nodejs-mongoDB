@@ -275,3 +275,7 @@ h4 {
   .article #goodBtn,
   .article #badBtn {
     cursor: pointer; }
+    .article #goodBtn:hover,
+    .article #badBtn:hover {
+      background-color: brown;
+      border-radius: 50%; }
