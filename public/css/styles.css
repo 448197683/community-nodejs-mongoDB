@@ -272,6 +272,8 @@ h4 {
   .article #content {
     margin-top: 12px;
     white-space: pre; }
+  .article #avatarBox {
+    position: relative; }
   .article #goodBtn,
   .article #badBtn {
     cursor: pointer; }
@@ -279,3 +281,7 @@ h4 {
     .article #badBtn:hover {
       background-color: brown;
       border-radius: 50%; }
+
+.editArticleWrapper {
+  display: flex;
+  flex-direction: column; }

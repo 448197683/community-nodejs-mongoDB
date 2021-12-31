@@ -6,13 +6,14 @@
     <title>Code:Me Article</title>
   </head>
   <body>
+    <span id="userData" data-isLoggedIn="<%=locals.isLoggedIn%>"></span>
     <%- include("./components/NAVBAR.ejs") %>
     <div class="container">
         <li class="article" data-id="<%=data._id%>">
           <%=data.title%>
           <div>
             by<span><a href="/user/profile/<%=data.owner%>"> <%=data.owner%></span></a> <span><%=data.createdAt%></span> ago
-            💬3 <span id="goodBtn" di>👍</span> <span id="goodNum"><%=locals.data.good%></span>   <span id="badBtn">👎</span><span id="badNum"><%=locals.data.bad%></span> 👀20 views
+            💬3 <span id="goodBtn" di>👍</span> <span id="goodNum"><%=locals.data.good%></span>   <span id="badBtn">👎</span><span id="badNum"><%=locals.data.bad%></span> 👀<span><%=locals.data.views%></span> views
             <div id="avatarBox"> <a href="/user/profile/<%=data.owner%>"> <%if(data.avatarURL){%>
               <img src="<%=data.avatarURL%>" alt="" />
               <%}else{%>

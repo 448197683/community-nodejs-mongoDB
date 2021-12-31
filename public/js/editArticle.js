@@ -18,6 +18,9 @@ const handleEdit = async (e) => {
         content,
       }),
     });
+    if (editFetch.status === 200) {
+      return window.location.replace(`/community/article/${postID}`);
+    }
   } catch (error) {
     console.log(error);
   }

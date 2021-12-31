@@ -2,8 +2,6 @@ const form = document.querySelector('form');
 const newPassword1 = document.querySelector('#newPassword1');
 const newPassword2 = document.querySelector('#newPassword2');
 const currentPassword = document.querySelector('#currentPassword');
-console.log(newPassword1, newPassword2, currentPassword);
-
 const handleSubmit = async (e) => {
   e.preventDefault();
   if (newPassword1.value !== newPassword2.value) {
@@ -24,7 +22,7 @@ const handleSubmit = async (e) => {
     return window.location.replace('/user/changePassword');
   }
   if (passwordFetch.status === 200) {
-    return window.location.replace('/user/profile');
+    return window.location.replace(`/user/profile/${form.dataset.nickname}`);
   }
 };
 

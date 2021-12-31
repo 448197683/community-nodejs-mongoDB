@@ -27,6 +27,7 @@ export const postWriteAritcleController = async (req, res) => {
       avatarURL: req.session.user.avatarURL,
       good: 0,
       bad: 0,
+      views: 0,
     });
     counter.count = counter.count + 1;
     const updateCounter = await db.collection('counter').updateOne(
@@ -42,12 +43,20 @@ export const postWriteAritcleController = async (req, res) => {
 };
 
 export const getArticleController = async (req, res) => {
-  console.log(req.params);
+  console.log(req.params.id);
   try {
+    const viewsUpdate = await db.collection('community').updateOne(
+      { _id: Number(req.params.id) },
+      {
+        $inc: {
+          views: +1,
+        },
+      }
+    );
     const post = await db
       .collection('community')
       .findOne({ _id: Number(req.params.id) });
-    console.log(post);
+
     return res.status(200).render('article.ejs', { data: post });
   } catch (error) {
     console.log(error);
@@ -67,7 +76,21 @@ export const deleteArticlecontroller = async (req, res) => {
 };
 
 export const putArticleCOntroller = async (req, res) => {
-  console.log(req.body);
+  try {
+    const editArticle = await db.collection('community').updateOne(
+      { _id: Number(req.params.id) },
+      {
+        $set: {
+          title: req.body.title,
+          content: req.body.content,
+          createdAt: new Date().getTime(),
+        },
+      }
+    );
+    return res.sendStatus(200);
+  } catch (error) {
+    console.log(error);
+  }
 };
 
 export const getEditArticleController = async (req, res) => {

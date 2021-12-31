@@ -5,6 +5,7 @@ export const resLocals = (req, res, next) => {
   res.locals.isLoggedIn = Boolean(req.session.isLoggedIn);
   if (req.session.user) {
     res.locals.user = req.session.user;
+    res.locals.user.password = '';
   } else {
     res.locals.user = '';
   }

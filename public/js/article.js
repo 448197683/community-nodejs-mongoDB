@@ -5,6 +5,8 @@ const goodBtn = document.querySelector('#goodBtn');
 const goodNum = document.querySelector('#goodNum');
 const badBtn = document.querySelector('#badBtn');
 const badNum = document.querySelector('#badNum');
+const userData = document.querySelector('#userData');
+const isLoggedIn = userData.dataset.isLoggedIn;
 
 let goodState = false;
 let badState = false;
@@ -58,6 +60,11 @@ const addBad = async (e) => {
   }
 };
 
-badBtn.addEventListener('click', addBad);
-goodBtn.addEventListener('click', addGood);
-editBtn.addEventListener('click', handleEdit);
+if (isLoggedIn) {
+  badBtn.addEventListener('click', addBad);
+  goodBtn.addEventListener('click', addGood);
+}
+
+if (editBtn) {
+  editBtn.addEventListener('click', handleEdit);
+}
