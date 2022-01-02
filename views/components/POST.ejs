@@ -1,10 +1,13 @@
 <a href="/community/article/<%=data._id%>">
   <li class="article">
-    <%=data.title%>
+    <h3><%=data.title%></h3>
     <div>
-      by<span> <%=data.owner%></span> <span><%=data.createdAt%></span> ago 💬3
-      👍<span><%=locals.data.good%></span> 👎<span><%=locals.data.bad%></span>
-      👀<span><%=locals.data.views%></span> views
+      by<span> <%=locals.data.owner%></span>
+      <span><%=locals.data.time%></span> 💬3 👍<span
+        ><%=locals.data.good%></span
+      >
+      👎<span><%=locals.data.bad%></span> 👀<span><%=locals.data.views%></span>
+      views
       <div id="avatarBox">
         <%if(data.avatarURL){%>
         <img src="<%=data.avatarURL%>" alt="" />

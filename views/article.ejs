@@ -6,13 +6,13 @@
     <title>Code:Me Article</title>
   </head>
   <body>
-    <span id="userData" data-isLoggedIn="<%=locals.isLoggedIn%>"></span>
+    <span id="userData" data-loginstate="<%=locals.isLoggedIn%>" data-avatar="<%=locals.user.avatarURL%>" data-owner="<%=locals.user.nickname%>" data-createdAt="<%=locals.user.createdAt%>"></span>
     <%- include("./components/NAVBAR.ejs") %>
     <div class="container">
         <li class="article" data-id="<%=data._id%>">
-          <%=data.title%>
+          <h3><%=data.title%></h3>
           <div>
-            by<span><a href="/user/profile/<%=data.owner%>"> <%=data.owner%></span></a> <span><%=data.createdAt%></span> ago
+            by<span><a href="/user/profile/<%=data.owner%>"> <%=locals.data.owner%></span></a> <span><%=locals.data.time%></span> 
             💬3 <span id="goodBtn" di>👍</span> <span id="goodNum"><%=locals.data.good%></span>   <span id="badBtn">👎</span><span id="badNum"><%=locals.data.bad%></span> 👀<span><%=locals.data.views%></span> views
             <div id="avatarBox"> <a href="/user/profile/<%=data.owner%>"> <%if(data.avatarURL){%>
               <img src="<%=data.avatarURL%>" alt="" />
@@ -22,11 +22,25 @@
             <p id="content"><%=data.content%></p>
           </div>
         </li>
+        <!-- Add Comments Form -->
+        <form action="#" id="commentForm" method="post">
+          <textarea name="commentInput" id="commentInput" placeholder="Leave a comment here" required></textarea>
+          <div><button id="writeCommentBtn">Write a comment</button>
+            <button id="cancelBtn">Cancel</button></div>
+        </form>
+        <!-- Add Comments Form -->
         <%if(locals.user.nickname===locals.data.owner){%>
-        <div><button id="editBtn">Edit Post</button>
-          <button id="commentBtn">comment</button>
+        <div class="commentEditBtns">
+          <button id="editBtn">Edit Post</button>
+          <button id="commentBtn">Add Comment</button>
         </div>
-        <%}%>
+        <%}else if(locals.isLoggedIn){%>
+          <button id="commentBtn" class="commentEditBtns">Add Comment</button>
+          <%}%>
+
+          <!-- comments container -->
+          <div id="commentsContainer"></div>
+          <!-- comments container -->
     </div>
   </body>
 </html>

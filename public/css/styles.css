@@ -282,6 +282,30 @@ h4 {
       background-color: brown;
       border-radius: 50%; }
 
+#commentForm {
+  width: 380px; }
+  #commentForm textarea {
+    width: 100%; }
+
+#commentsContainer {
+  margin-top: 15px; }
+  #commentsContainer #commentDIV {
+    width: 380px;
+    border: 1px solid black;
+    background-color: rgba(70, 131, 180, 0.7);
+    border-radius: 10px; }
+  #commentsContainer #commentHeader {
+    display: flex;
+    padding: 10px;
+    align-items: center; }
+    #commentsContainer #commentHeader img {
+      width: 30px;
+      margin-right: 10px; }
+    #commentsContainer #commentHeader #time {
+      margin-left: 10px; }
+  #commentsContainer #commentBody {
+    padding: 0 10px 10px 10px; }
+
 .editArticleWrapper {
   display: flex;
   flex-direction: column; }

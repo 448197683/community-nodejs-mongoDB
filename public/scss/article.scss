@@ -19,3 +19,34 @@
     }
   }
 }
+#commentForm {
+  width: 380px;
+  textarea {
+    width: 100%;
+  }
+}
+
+#commentsContainer {
+  margin-top: 15px;
+  #commentDIV {
+    width: 380px;
+    border: 1px solid black;
+    background-color: rgba(70, 131, 180, 0.7);
+    border-radius: 10px;
+  }
+  #commentHeader {
+    display: flex;
+    padding: 10px;
+    align-items: center;
+    img {
+      width: 30px;
+      margin-right: 10px;
+    }
+    #time {
+      margin-left: 10px;
+    }
+  }
+  #commentBody {
+    padding: 0 10px 10px 10px;
+  }
+}
