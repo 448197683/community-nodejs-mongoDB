@@ -6,14 +6,14 @@
     <title>Code:Me Article</title>
   </head>
   <body>
-    <span id="userData" data-loginstate="<%=locals.isLoggedIn%>" data-avatar="<%=locals.user.avatarURL%>" data-owner="<%=locals.user.nickname%>" data-createdAt="<%=locals.user.createdAt%>"></span>
+    <span id="userData" data-loginstate="<%=locals.isLoggedIn%>" data-avatar="<%=locals.user.avatarURL%>" data-owner="<%=locals.user.nickname%>" data-createdat="<%=locals.user.createdAt%>"></span>
     <%- include("./components/NAVBAR.ejs") %>
     <div class="container">
         <li class="article" data-id="<%=data._id%>">
           <h3><%=data.title%></h3>
           <div>
             by<span><a href="/user/profile/<%=data.owner%>"> <%=locals.data.owner%></span></a> <span><%=locals.data.time%></span> 
-            💬3 <span id="goodBtn" di>👍</span> <span id="goodNum"><%=locals.data.good%></span>   <span id="badBtn">👎</span><span id="badNum"><%=locals.data.bad%></span> 👀<span><%=locals.data.views%></span> views
+            💬<span id="articleCommentNumberSpan"><%=locals.comments.length%></span> <span id="goodBtn" di>👍</span> <span id="goodNum"><%=locals.data.good%></span>   <span id="badBtn">👎</span><span id="badNum"><%=locals.data.bad%></span> 👀<span><%=locals.data.views%></span> views
             <div id="avatarBox"> <a href="/user/profile/<%=data.owner%>"> <%if(data.avatarURL){%>
               <img src="<%=data.avatarURL%>" alt="" />
               <%}else{%>
@@ -37,9 +37,17 @@
         <%}else if(locals.isLoggedIn){%>
           <button id="commentBtn" class="commentEditBtns">Add Comment</button>
           <%}%>
-
+          <%if(locals.comments.length>1){%>
+          <p id="commentNumbers"><span id="commentNumberSpan"><%=locals.comments.length%></span> comments</p>
+          <%}else{%>
+            <p id="commentNumbers"><span id="commentNumberSpan"><%=locals.comments.length%></span> comment</p>
+          <%}%>
           <!-- comments container -->
-          <div id="commentsContainer"></div>
+          <div id="commentsContainer">
+            <%locals.comments.forEach((comment)=>{%>
+              <%- include("./components/COMMENT.ejs",{comment})%>
+            <%})%>
+          </div>
           <!-- comments container -->
     </div>
   </body>

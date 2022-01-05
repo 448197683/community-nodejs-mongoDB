@@ -13,7 +13,9 @@ export const connectDB = async () => {
     counter = await db.collection('counter').findOne({ name: 'counter' });
     if (!counter) {
       await db.collection('counter').insertOne({ count: 0, name: 'counter' });
+      counter = await db.collection('counter').findOne({ name: 'counter' });
     }
+    console.log(counter);
     console.log(`💚 DB is connected to Monog Server`);
   } catch (error) {
     console.log(error);

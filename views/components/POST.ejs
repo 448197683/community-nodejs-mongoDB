@@ -3,10 +3,12 @@
     <h3><%=data.title%></h3>
     <div>
       by<span> <%=locals.data.owner%></span>
-      <span><%=locals.data.time%></span> 💬3 👍<span
-        ><%=locals.data.good%></span
-      >
-      👎<span><%=locals.data.bad%></span> 👀<span><%=locals.data.views%></span>
+      <span><%=locals.data.time%></span>
+      💬<span
+        ><%if(data.comments){%> <%=data.comments.length%> <%}else{%> 0 <%}%>
+      </span>
+      👍<span><%=locals.data.good%></span> 👎<span><%=locals.data.bad%></span>
+      👀<span><%=locals.data.views%></span>
       views
       <div id="avatarBox">
         <%if(data.avatarURL){%>

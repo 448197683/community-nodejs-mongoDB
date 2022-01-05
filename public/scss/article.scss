@@ -26,6 +26,10 @@
   }
 }
 
+#commentNumbers {
+  width: 380px;
+}
+
 #commentsContainer {
   margin-top: 15px;
   #commentDIV {
@@ -33,6 +37,7 @@
     border: 1px solid black;
     background-color: rgba(70, 131, 180, 0.7);
     border-radius: 10px;
+    margin-bottom: 10px;
   }
   #commentHeader {
     display: flex;

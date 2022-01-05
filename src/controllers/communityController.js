@@ -2,12 +2,15 @@ import { db, counter } from '../db.js';
 
 export const communityController = async (req, res) => {
   try {
-    const findCommunity = await db.collection('community').find().toArray();
+    const findCommunity = await db
+      .collection('community')
+      .find()
+      .sort({ _id: -1 })
+      .toArray();
     findCommunity.forEach((article) => {
       const time = createdAt(article.createdAt);
       article.time = time;
     });
-
     res.status(200).render('community.ejs', { datas: findCommunity });
   } catch (error) {
     console.log(error);
@@ -59,7 +62,15 @@ export const getArticleController = async (req, res) => {
 
     const time = createdAt(post.createdAt);
     post.time = time;
-    return res.status(200).render('article.ejs', { data: post });
+    const comments = await db
+      .collection('comments')
+      .find({ articleId: String(req.params.id) })
+      .sort({ _id: -1 })
+      .toArray();
+    comments.forEach((comment) => {
+      comment.createdAt = createdAt(comment.createdAt);
+    });
+    return res.status(200).render('article.ejs', { data: post, comments });
   } catch (error) {
     console.log(error);
   }
@@ -141,6 +152,12 @@ export const addCommentController = async (req, res) => {
       avatarURL: req.session.user.avatarURL,
       createdAt: Math.floor(new Date().getTime() / (1000 * 60)),
     });
+    const updateArticle = await db
+      .collection('community')
+      .updateOne(
+        { _id: Number(articleId) },
+        { $addToSet: { comments: addComment.insertedId } }
+      );
     return res.status(200).end();
   } catch (error) {
     console.log(error);

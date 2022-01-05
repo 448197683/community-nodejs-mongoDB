@@ -1,0 +1,16 @@
+<div id="commentDIV">
+  <div id="commentHeader">
+    <a href="/user/porfile/<%=comment.nickname%>">
+      <%if(comment.avatarURL){%>
+      <img src="<%=comment.avatarURL%>" alt="" />
+      <%}else{%>
+      <img src="/public/images/nouser.png" alt="" />
+      <%}%>
+    </a>
+    <a href="/user/porfile/<%=comment.nickname%>"
+      ><span><%=comment.nickname%></span></a
+    >
+    <span id="time"><%=comment.createdAt%></span>
+  </div>
+  <div id="commentBody"><%=comment.content%></div>
+</div>

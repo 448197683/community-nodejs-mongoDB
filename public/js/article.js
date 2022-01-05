@@ -13,6 +13,10 @@ const commentEditBtns = document.querySelector('.commentEditBtns');
 const cancelBtn = document.querySelector('#cancelBtn');
 const writeCommentBtn = document.querySelector('#writeCommentBtn');
 const commentsContainer = document.querySelector('#commentsContainer');
+const commentNumberSpan = document.querySelector('#commentNumberSpan');
+const articleCommentNumberSpan = document.querySelector(
+  '#articleCommentNumberSpan'
+);
 
 const isLoggedIn = userData.dataset.loginstate;
 
@@ -98,6 +102,9 @@ const writeComment = async (e) => {
       const time = createdAt(Math.floor(new Date().getTime() / (1000 * 60)));
       createComment(textArea.value, time);
       textArea.value = '';
+      commentNumberSpan.innerHTML = Number(commentNumberSpan.innerHTML) + 1;
+      articleCommentNumberSpan.innerHTML =
+        Number(articleCommentNumberSpan.innerHTML) + 1;
     }
   } catch (error) {
     console.log(error);
