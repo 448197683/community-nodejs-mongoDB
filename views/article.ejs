@@ -36,6 +36,8 @@
         </div>
         <%}else if(locals.isLoggedIn){%>
           <button id="commentBtn" class="commentEditBtns">Add Comment</button>
+          <%}else{%>
+            <a href="/user/login"><button id="commentBtn" class="commentEditBtns">Add Comment</button></a> 
           <%}%>
           <%if(locals.comments.length>1){%>
           <p id="commentNumbers"><span id="commentNumberSpan"><%=locals.comments.length%></span> comments</p>

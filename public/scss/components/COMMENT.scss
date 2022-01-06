@@ -1,0 +1,25 @@
+#commentHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  #commentToolBox {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 80px;
+    #replyBtn {
+      font-size: 25px;
+      margin: 0 10px;
+      color: gold;
+      cursor: pointer;
+    }
+    #commentEditBtn {
+      font-size: 25px;
+      color: tomato;
+      cursor: pointer;
+    }
+    #commentDeleteBtn {
+      cursor: pointer;
+    }
+  }
+}

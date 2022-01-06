@@ -1,4 +1,5 @@
 import { db, counter } from '../db.js';
+import { ObjectId } from 'mongodb';
 
 export const communityController = async (req, res) => {
   try {
@@ -142,7 +143,7 @@ export const putAddGoodController = async (req, res) => {
 };
 
 export const addCommentController = async (req, res) => {
-  const articleId = req.params.articleId;
+  const articleId = req.params.articleID;
   const content = req.body.comment;
   try {
     const addComment = await db.collection('comments').insertOne({
@@ -164,6 +165,25 @@ export const addCommentController = async (req, res) => {
   }
 };
 
+export const deleteCommentController = async (req, res) => {
+  const commentID = new ObjectId(req.body.commentID);
+  console.log(commentID);
+  try {
+    const deleteCommentInArticle = await db.collection('community').updateOne(
+      { _id: Number(req.params.articleID) },
+      {
+        $pull: { comments: commentID },
+      }
+    );
+    const deleteComment = await db
+      .collection('comments')
+      .deleteOne({ _id: commentID });
+    return res.status(200).end();
+  } catch (error) {
+    console.log(error);
+  }
+};
+
 const createdAt = (oldTime) => {
   const currentTime = Math.floor(new Date().getTime() / (1000 * 60));
   const calTime = currentTime - oldTime;
@@ -172,7 +192,7 @@ const createdAt = (oldTime) => {
     return `${calTime < 2 ? `1 minute ago` : `${calTime} minutes ago`}`;
   } else if (calTime >= 60 && calTime < 60 * 24) {
     resultTime = Math.floor(calTime / 60);
-    return `${resultTime < 2 ? `1 hour aog` : `${resultTime}hours ago`}`;
+    return `${resultTime < 2 ? `1 hour ago` : `${resultTime}hours ago`}`;
   } else if (calTime >= 60 * 24 && calTime < 60 * 24 * 30) {
     resultTime = Math.floor(calTime / (60 * 24));
     return `${resultTime < 2 ? `1 day ago` : `${resultTime} days ago`}`;
@@ -181,6 +201,6 @@ const createdAt = (oldTime) => {
     return `${resultTime < 2 ? `1 month ago` : `${resultTime} months ago`}`;
   } else {
     resultTime = Math.floor(calTime / (60 * 24 * 30 * 12));
-    return `${resultTime < 2 ? `1 year aog` : `${resultTime} years ago`}`;
+    return `${resultTime < 2 ? `1 year ago` : `${resultTime} years ago`}`;
   }
 };

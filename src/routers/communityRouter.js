@@ -9,6 +9,7 @@ import {
   getEditArticleController,
   putAddGoodController,
   addCommentController,
+  deleteCommentController,
 } from '../controllers/communityController';
 
 import { loginOnly, logoutOnly } from '../middleware/middleware.js';
@@ -23,4 +24,9 @@ communityRouter.delete('/article/:id', loginOnly, deleteArticlecontroller);
 communityRouter.put('/article/:id', loginOnly, putArticleCOntroller);
 communityRouter.get('/editArticle/:id', getEditArticleController);
 communityRouter.put('/addGood/:id', loginOnly, putAddGoodController);
-communityRouter.post('/comments/:articleId', loginOnly, addCommentController);
+communityRouter.post('/comments/:articleID', loginOnly, addCommentController);
+communityRouter.delete(
+  '/comments/:articleID',
+  loginOnly,
+  deleteCommentController
+);

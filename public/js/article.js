@@ -68,11 +68,24 @@ const createComment = (content, time) => {
   commentDIV.id = 'commentDIV';
   const commentHeader = document.createElement('div');
   commentHeader.innerHTML = `
-  <a href=/user/profile/${userData.dataset.owner}>
-  <img src=${userData.dataset.avatar}></a>
-  <a href=/user/profile/${userData.dataset.owner}><span>${userData.dataset.owner}</span>
-  </a>
-  <span id="time">${time}</span>
+  <div>
+    <a href=/user/profile/${userData.dataset.owner}>
+    <img src=${
+      userData.dataset.avatar
+        ? userData.dataset.avatar
+        : '/public/images/nouser.png'
+    }></a>
+    <a href=/user/profile/${userData.dataset.owner}><span>${
+    userData.dataset.owner
+  }</span>
+    </a>
+    <span id="time">${time}</span>
+  </div>
+  <div id="commentToolBox">
+  <span id="commentEditBtn">✏</span>
+  <span id="replyBtn">↩</span>
+  <span id="commentDeleteBtn">✖</span>
+  </div>
   `;
   commentHeader.id = 'commentHeader';
   const commentBody = document.createElement('div');
@@ -164,6 +177,73 @@ if (isLoggedIn) {
 if (editBtn) {
   editBtn.addEventListener('click', handleEdit);
 }
+
+/* Comment Tool */
+const commentEditBtn = document.querySelector('#commentEditBtn');
+const replyBtn = document.querySelector('#replyBtn');
+const commentDeleteBtns = document.querySelectorAll('#commentDeleteBtn');
+let commentID;
+let commentDIV;
+const askDeletComment = (e) => {
+  commentID =
+    e.target.parentElement.parentElement.parentElement.dataset.commentid;
+  commentDIV = e.target.parentElement.parentElement.parentElement;
+  const modalWindow = document.createElement('div');
+  modalWindow.id = 'modalWindow';
+  modalWindow.className = 'modalWindow';
+  modalWindow.innerHTML = `
+  <div id="modalInner">
+  <h3>Delete Comment</h3>
+  <p>Do you want to delete comment?</p>
+  <div id="modalBtns">
+  <button id="commentCancelBtn">Cansel</button>
+  <button id="commentConfirmBtn">Confirm</button>
+  </div>
+  </div>
+  `;
+
+  document.body.style = 'overflow:hidden';
+  document.body.append(modalWindow);
+
+  const commentCancelBtn = document.querySelector('#commentCancelBtn');
+  const commentConfirmBtn = document.querySelector('#commentConfirmBtn');
+  commentCancelBtn.addEventListener('click', (e) => {
+    modalWindow.remove();
+    document.body.style = 'overflow:auto';
+    return;
+  });
+  commentConfirmBtn.addEventListener('click', (e) => {
+    modalWindow.remove();
+    document.body.style = 'overflow:auto';
+    deleteComment();
+  });
+};
+
+const deleteComment = async (e) => {
+  let articleID = window.location.href.split('/');
+  articleID = articleID[articleID.length - 1];
+  console.log(articleID);
+  try {
+    const deleteCommentFetch = await fetch(`/community/comments/${articleID}`, {
+      method: 'DELETE',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ commentID }),
+    });
+    if (deleteCommentFetch.status === 200) {
+      commentDIV.remove();
+      commentNumberSpan.innerHTML = Number(commentNumberSpan.innerHTML) - 1;
+      articleCommentNumberSpan.innerHTML =
+        Number(articleCommentNumberSpan.innerHTML) - 1;
+      commentID = '';
+    }
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+commentDeleteBtns.forEach((commentDeleteBtn) => {
+  commentDeleteBtn.addEventListener('click', askDeletComment);
+});
 
 const init = () => {
   commentForm.hidden = true;
