@@ -189,12 +189,33 @@ body {
       margin: 0 10px;
       color: gold;
       cursor: pointer; }
-    #commentHeader #commentToolBox #commentEditBtn {
+    #commentHeader #commentToolBox #commentToolEditBtn {
       font-size: 25px;
       color: tomato;
       cursor: pointer; }
     #commentHeader #commentToolBox #commentDeleteBtn {
       cursor: pointer; }
+
+#commentBody {
+  position: relative; }
+  #commentBody #editDIV form {
+    width: 350px;
+    display: flex;
+    justify-content: space-between; }
+    #commentBody #editDIV form input {
+      background-color: white;
+      border: none;
+      outline: none;
+      padding: 5px;
+      border-radius: 10px 0 0 10px;
+      width: 100%; }
+    #commentBody #editDIV form button {
+      border: none;
+      outline: none;
+      background-color: tomato;
+      border-radius: 0 10px 10px 0;
+      color: white;
+      padding: 0 5px; }
 
 .modalWindow {
   background-color: rgba(0, 0, 0, 0.349);

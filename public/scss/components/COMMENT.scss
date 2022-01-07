@@ -13,13 +13,40 @@
       color: gold;
       cursor: pointer;
     }
-    #commentEditBtn {
+    #commentToolEditBtn {
       font-size: 25px;
       color: tomato;
       cursor: pointer;
     }
     #commentDeleteBtn {
       cursor: pointer;
+    }
+  }
+}
+
+#commentBody {
+  position: relative;
+  #editDIV {
+    form {
+      width: 350px;
+      display: flex;
+      justify-content: space-between;
+      input {
+        background-color: white;
+        border: none;
+        outline: none;
+        padding: 5px;
+        border-radius: 10px 0 0 10px;
+        width: 100%;
+      }
+      button {
+        border: none;
+        outline: none;
+        background-color: tomato;
+        border-radius: 0 10px 10px 0;
+        color: white;
+        padding: 0 5px;
+      }
     }
   }
 }

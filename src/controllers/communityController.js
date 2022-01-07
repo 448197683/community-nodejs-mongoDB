@@ -21,6 +21,7 @@ export const communityController = async (req, res) => {
 export const getWriteAritcleController = (req, res) => {
   res.status(200).render('writeArticle.ejs');
 };
+
 export const postWriteAritcleController = async (req, res) => {
   try {
     const saveArticle = await db.collection('community').insertOne({
@@ -153,13 +154,14 @@ export const addCommentController = async (req, res) => {
       avatarURL: req.session.user.avatarURL,
       createdAt: Math.floor(new Date().getTime() / (1000 * 60)),
     });
+    const newCommentID = addComment.insertedId;
     const updateArticle = await db
       .collection('community')
       .updateOne(
         { _id: Number(articleId) },
         { $addToSet: { comments: addComment.insertedId } }
       );
-    return res.status(200).end();
+    return res.status(200).end(JSON.stringify({ newCommentID }));
   } catch (error) {
     console.log(error);
   }
@@ -167,7 +169,6 @@ export const addCommentController = async (req, res) => {
 
 export const deleteCommentController = async (req, res) => {
   const commentID = new ObjectId(req.body.commentID);
-  console.log(commentID);
   try {
     const deleteCommentInArticle = await db.collection('community').updateOne(
       { _id: Number(req.params.articleID) },

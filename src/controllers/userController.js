@@ -3,6 +3,7 @@ import bcrypt from 'bcrypt';
 import fs from 'fs';
 import path from 'path';
 import fetch from 'cross-fetch';
+import console from 'console';
 
 export const getJoinController = (req, res) => {
   return res.status(200).render('join.ejs');
@@ -316,7 +317,6 @@ export const postEditProfileController = async (req, res) => {
     console.log(error);
   }
 
-  console.log(req.file);
   let fileURL;
   if (req.file) {
     fileURL = path.resolve(__dirname, '..', '..', `${req.file.path}`);
@@ -347,6 +347,33 @@ export const postEditProfileController = async (req, res) => {
           },
         }
       );
+      const findCommunity = await db
+        .collection('community')
+        .find({ owner: nickname })
+        .toArray();
+      findCommunity.forEach(async (community) => {
+        community.avatarURL = avatar;
+        const updateCommunity = await db.collection('community').updateOne(
+          { _id: Number(community._id) },
+          {
+            $set: { avatarURL: avatar },
+          }
+        );
+      });
+      const findComments = await db
+        .collection('comments')
+        .find({ nickname })
+        .toArray();
+      findComments.forEach(async (comment) => {
+        comment.avatarURL = avatar;
+        const updateComment = await db.collection('comments').updateOne(
+          { _id: comment._id },
+          {
+            $set: { avatarURL: avatar },
+          }
+        );
+      });
+
       if (req.file && req.session.user.avatarURL) {
         /* delete */
         const imgURL = path.resolve(
@@ -403,9 +430,7 @@ export const postEditProfileController = async (req, res) => {
       );
       deleteAvatar(imgURL);
     }
-    console.log(`1`, req.session.user);
     req.session.user = await db.collection('users').findOne({ email });
-    console.log(`2`, req.session.user);
     return res
       .status(300)
       .redirect(`/user/profile/${req.session.user.nickname}`);

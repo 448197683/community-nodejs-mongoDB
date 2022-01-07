@@ -17,6 +17,8 @@ const commentNumberSpan = document.querySelector('#commentNumberSpan');
 const articleCommentNumberSpan = document.querySelector(
   '#articleCommentNumberSpan'
 );
+let commentDeleteBtns = document.querySelectorAll('#commentDeleteBtn');
+let commentToolEditBtns = document.querySelectorAll('#commentToolEditBtn');
 
 const isLoggedIn = userData.dataset.loginstate;
 
@@ -63,9 +65,10 @@ const cancelComment = (e) => {
   textArea.value = '';
 };
 
-const createComment = (content, time) => {
+const createComment = (content, time, newID) => {
   const commentDIV = document.createElement('div');
   commentDIV.id = 'commentDIV';
+  commentDIV.dataset.commentid = newID;
   const commentHeader = document.createElement('div');
   commentHeader.innerHTML = `
   <div>
@@ -82,7 +85,7 @@ const createComment = (content, time) => {
     <span id="time">${time}</span>
   </div>
   <div id="commentToolBox">
-  <span id="commentEditBtn">✏</span>
+  <span id="commentToolEditBtn">✏</span>
   <span id="replyBtn">↩</span>
   <span id="commentDeleteBtn">✖</span>
   </div>
@@ -109,16 +112,21 @@ const writeComment = async (e) => {
         body: JSON.stringify({ comment: textArea.value }),
       }
     );
+    const newCommentID = await commentFetch.json();
+
     if (commentFetch.status === 200) {
       commentForm.hidden = true;
       commentEditBtns.hidden = false;
       const time = createdAt(Math.floor(new Date().getTime() / (1000 * 60)));
-      createComment(textArea.value, time);
+      createComment(textArea.value, time, newCommentID.newCommentID);
       textArea.value = '';
       commentNumberSpan.innerHTML = Number(commentNumberSpan.innerHTML) + 1;
       articleCommentNumberSpan.innerHTML =
         Number(articleCommentNumberSpan.innerHTML) + 1;
     }
+
+    updateDeleteBtns();
+    updateEditBtns();
   } catch (error) {
     console.log(error);
   }
@@ -181,10 +189,10 @@ if (editBtn) {
 /* Comment Tool */
 const commentEditBtn = document.querySelector('#commentEditBtn');
 const replyBtn = document.querySelector('#replyBtn');
-const commentDeleteBtns = document.querySelectorAll('#commentDeleteBtn');
+
 let commentID;
 let commentDIV;
-const askDeletComment = (e) => {
+const askDeleteComment = (e) => {
   commentID =
     e.target.parentElement.parentElement.parentElement.dataset.commentid;
   commentDIV = e.target.parentElement.parentElement.parentElement;
@@ -241,12 +249,38 @@ const deleteComment = async (e) => {
   }
 };
 
-commentDeleteBtns.forEach((commentDeleteBtn) => {
-  commentDeleteBtn.addEventListener('click', askDeletComment);
-});
+const handleEditComment = (e) => {
+  const commentBody = e.target.parentElement.parentElement.nextElementSibling;
+  const editDIV = document.createElement('div');
+  editDIV.id = 'editDIV';
+  editDIV.innerHTML = `
+  <form>
+<input type="text" value=${commentBody.innerHTML}>
+<button>Submit</button>
+  </form>
+  `;
+  commentBody.innerHTML = '';
+  commentBody.append(editDIV);
+};
+
+const updateEditBtns = () => {
+  commentToolEditBtns = document.querySelectorAll('#commentToolEditBtn');
+  commentToolEditBtns.forEach((editBtn) => {
+    editBtn.addEventListener('click', handleEditComment);
+  });
+};
+
+const updateDeleteBtns = () => {
+  commentDeleteBtns = document.querySelectorAll('#commentDeleteBtn');
+  commentDeleteBtns.forEach((commentDeleteBtn) => {
+    commentDeleteBtn.addEventListener('click', askDeleteComment);
+  });
+};
 
 const init = () => {
   commentForm.hidden = true;
+  updateDeleteBtns();
+  updateEditBtns();
 };
 
 init();
