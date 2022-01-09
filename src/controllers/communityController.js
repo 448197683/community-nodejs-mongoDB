@@ -1,5 +1,5 @@
 import { db, counter } from '../db.js';
-import { ObjectId } from 'mongodb';
+import { ConnectionCheckOutStartedEvent, ObjectId } from 'mongodb';
 
 export const communityController = async (req, res) => {
   try {
@@ -180,6 +180,44 @@ export const deleteCommentController = async (req, res) => {
       .collection('comments')
       .deleteOne({ _id: commentID });
     return res.status(200).end();
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+export const putCommentController = async (req, res) => {
+  console.log(req.params, req.body);
+  try {
+    const editComment = await db.collection('comments').updateOne(
+      { _id: new ObjectId(req.params.commentID) },
+      {
+        $set: { content: req.body.content },
+      }
+    );
+    return res.status(200).end();
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+export const postnestCommentController = async (req, res) => {
+  try {
+    const saveNestComment = await db.collection('nestcomments').insertOne({
+      content: req.body.content,
+      owner: req.session.user.nickname,
+      createdAt: Math.floor(new Date().getTime() / (1000 * 60)),
+      commentID: req.params.commentID,
+      articleID: req.body.articleID,
+    });
+    const updateComment = await db.collection('comments').updateOne(
+      { _id: new ObjectId(req.params.commentID) },
+      {
+        $addToSet: { nestComments: saveNestComment.insertedId },
+      }
+    );
+    return res
+      .status(200)
+      .end(JSON.stringify({ nestCommentID: saveNestComment.insertedId }));
   } catch (error) {
     console.log(error);
   }
