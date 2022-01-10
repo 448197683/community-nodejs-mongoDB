@@ -20,6 +20,7 @@ const articleCommentNumberSpan = document.querySelector(
 let commentDeleteBtns = document.querySelectorAll('#commentDeleteBtn');
 let commentToolEditBtns = document.querySelectorAll('#commentToolEditBtn');
 let commentReplyBtns = document.querySelectorAll('#replyBtn');
+let nestCommentDeleteBtns = document.querySelectorAll('#nestCommentDeleteBtn');
 
 const isLoggedIn = userData.dataset.loginstate;
 
@@ -340,6 +341,7 @@ const addReply = (e) => {
         nestCommentWrapper.id = 'nestCommentWrapper';
         nestCommentWrapper.dataset.nestid = nestCommentID;
         nestCommentWrapper.innerHTML = `
+        <div id="nestCommentDIV">
         <div id="nestHeader">
           <div>
             <a href="/user/profile/${userData.dataset.owner}">
@@ -348,17 +350,55 @@ const addReply = (e) => {
             <a href="/user/profile/${userData.dataset.owner}">
               <span>${userData.dataset.owner}</span>
             </a>
-            <span>${time}</span>
+            <span>${time}</span>          
+          </div>
+          <div id="nestCommentToolBox">
+          <span id="nestCommentDeleteBtn">✖</span>
           </div>
         </div>
-        <div id="nestBody">${e.target[0].value}</div>
+        <div id="nestCommentBody">${e.target[0].value}
+        </div>
+        </div>
         `;
         commentDIV.append(nestCommentWrapper);
+        replyDIV.remove();
+        updateNestDeleteBtns();
       }
     } catch (error) {
       console.log(error);
     }
   });
+};
+
+/* ============================================================================== */
+const deleteNestComment = async (e) => {
+  e.preventDefault();
+  const nestParentEl =
+    e.target.parentElement.parentElement.parentElement.parentElement;
+  const commentID =
+    e.target.parentElement.parentElement.parentElement.parentElement
+      .parentElement.dataset.commentid;
+  console.log(
+    e.target.parentElement.parentElement.parentElement.parentElement
+      .parentElement
+  );
+  const url = window.location.href.split('/');
+  const articleID = url[url.length - 1];
+  try {
+    const deleteNestFetch = await fetch(
+      `/community/nestComments/${articleID}`,
+      {
+        method: 'DELETE',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          commentID,
+          nestID: nestParentEl.dataset.nestid,
+        }),
+      }
+    );
+  } catch (error) {
+    console.log(error);
+  }
 };
 
 const updateReplyBtns = () => {
@@ -383,11 +423,20 @@ const updateDeleteBtns = () => {
   });
 };
 
+const updateNestDeleteBtns = () => {
+  nestCommentDeleteBtns = document.querySelectorAll('#nestCommentDeleteBtn');
+  console.log(nestCommentDeleteBtns);
+  nestCommentDeleteBtns.forEach((nestCommentDeleteBtn) => {
+    nestCommentDeleteBtn.addEventListener('click', deleteNestComment);
+  });
+};
+
 const init = () => {
   commentForm.hidden = true;
   updateDeleteBtns();
   updateEditBtns();
   updateReplyBtns();
+  updateNestDeleteBtns();
 };
 
 init();

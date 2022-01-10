@@ -47,7 +47,14 @@
           <!-- comments container -->
           <div id="commentsContainer">
             <%locals.comments.forEach((comment)=>{%>
+              <div id="commentWrapper" data-commentid="<%=comment._id%>">
               <%- include("./components/COMMENT.ejs",{comment})%>
+              <%if(comment.nestComments){%>
+              <%comment.nestComments.forEach((nestComment)=>{%>
+                <%- include("./components/NESTCOMMENT.ejs",{nestComment})%>
+              <%})%>
+              <%}%>
+            </div>
             <%})%>
           </div>
           <!-- comments container -->

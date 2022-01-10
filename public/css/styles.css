@@ -239,6 +239,34 @@ body {
       color: white;
       padding: 0 5px; }
 
+#nestCommentWrapper {
+  width: 380px;
+  position: relative; }
+  #nestCommentWrapper #nestCommentDIV {
+    width: 340px;
+    position: relative;
+    background-color: rgba(0, 100, 0, 0.74);
+    border-radius: 10px;
+    margin-bottom: 10px;
+    left: 30px; }
+    #nestCommentWrapper #nestCommentDIV #nestHeader {
+      display: flex;
+      padding: 10px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center; }
+      #nestCommentWrapper #nestCommentDIV #nestHeader img {
+        width: 30px;
+        margin-right: 10px; }
+      #nestCommentWrapper #nestCommentDIV #nestHeader #time {
+        margin-left: 10px; }
+      #nestCommentWrapper #nestCommentDIV #nestHeader #nestCommentToolBox {
+        cursor: pointer; }
+        #nestCommentWrapper #nestCommentDIV #nestHeader #nestCommentToolBox:hover {
+          color: red; }
+    #nestCommentWrapper #nestCommentDIV #nestCommentBody {
+      padding: 0 10px 10px 10px; }
+
 .modalWindow {
   background-color: rgba(0, 0, 0, 0.349);
   height: 100vh;

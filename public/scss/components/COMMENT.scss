@@ -77,3 +77,39 @@
     }
   }
 }
+
+#nestCommentWrapper {
+  width: 380px;
+  position: relative;
+  #nestCommentDIV {
+    width: 340px;
+    position: relative;
+    background-color: rgba(0, 100, 0, 0.74);
+    border-radius: 10px;
+    margin-bottom: 10px;
+    left: 30px;
+    #nestHeader {
+      display: flex;
+      padding: 10px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      img {
+        width: 30px;
+        margin-right: 10px;
+      }
+      #time {
+        margin-left: 10px;
+      }
+      #nestCommentToolBox {
+        cursor: pointer;
+        &:hover {
+          color: red;
+        }
+      }
+    }
+    #nestCommentBody {
+      padding: 0 10px 10px 10px;
+    }
+  }
+}

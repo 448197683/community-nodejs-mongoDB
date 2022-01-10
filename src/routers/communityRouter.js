@@ -12,6 +12,7 @@ import {
   deleteCommentController,
   putCommentController,
   postnestCommentController,
+  deleteNestCommentController,
 } from '../controllers/communityController';
 
 import { loginOnly, logoutOnly } from '../middleware/middleware.js';
@@ -37,4 +38,9 @@ communityRouter.post(
   '/nestComments/:commentID',
   loginOnly,
   postnestCommentController
+);
+communityRouter.delete(
+  '/nestComments/:articleID',
+  loginOnly,
+  deleteNestCommentController
 );

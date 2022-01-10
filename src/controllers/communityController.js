@@ -71,7 +71,13 @@ export const getArticleController = async (req, res) => {
       .toArray();
     comments.forEach((comment) => {
       comment.createdAt = createdAt(comment.createdAt);
+      if (comment.nestComments) {
+        comment.nestComments.forEach((nest) => {
+          nest.createdAt = createdAt(nest.createdAt);
+        });
+      }
     });
+
     return res.status(200).render('article.ejs', { data: post, comments });
   } catch (error) {
     console.log(error);
@@ -209,15 +215,48 @@ export const postnestCommentController = async (req, res) => {
       commentID: req.params.commentID,
       articleID: req.body.articleID,
     });
-    const updateComment = await db.collection('comments').updateOne(
+    const nestToComment = await db.collection('comments').updateOne(
       { _id: new ObjectId(req.params.commentID) },
       {
-        $addToSet: { nestComments: saveNestComment.insertedId },
+        $addToSet: {
+          nestComments: {
+            nestid: saveNestComment.insertedId,
+            content: req.body.content,
+            owner: req.session.user.nickname,
+            createdAt: Math.floor(new Date().getTime() / (1000 * 60)),
+            commentID: req.params.commentID,
+            articleID: req.body.articleID,
+            avatarURL: req.session.user.avatarURL,
+          },
+        },
       }
     );
-    return res
-      .status(200)
-      .end(JSON.stringify({ nestCommentID: saveNestComment.insertedId }));
+    return res.status(200).end(
+      JSON.stringify({
+        nestCommentID: saveNestComment.insertedId,
+      })
+    );
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+export const deleteNestCommentController = async (req, res) => {
+  console.log(req.body, req.params);
+  const articleID = req.params.articleID;
+  const { commentID, nestID } = req.body;
+  try {
+    const updateComment = await db.collection('comments').updateOne(
+      { _id: new ObjectId(commentID) },
+      {
+        $pull: {
+          nestComments: { nestid: new ObjectId(nestID) },
+        },
+      }
+    );
+    const deleteNest = await db
+      .collection('nestcomments')
+      .deleteOne({ _id: new ObjectId(nestID) });
   } catch (error) {
     console.log(error);
   }
