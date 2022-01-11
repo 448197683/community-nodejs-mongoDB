@@ -69,9 +69,9 @@ const cancelComment = (e) => {
 };
 
 const createComment = (content, time, newID) => {
-  const commentDIV = document.createElement('div');
-  commentDIV.id = 'commentWrapper';
-  commentDIV.dataset.commentid = newID;
+  const commentWrapper = document.createElement('div');
+  commentWrapper.id = 'commentWrapper';
+  commentWrapper.dataset.commentid = newID;
   const commentInner = document.createElement('div');
   commentInner.id = 'commentDIV';
   const commentHeader = document.createElement('div');
@@ -100,8 +100,10 @@ const createComment = (content, time, newID) => {
   commentBody.id = 'commentBody';
   commentBody.innerHTML = content;
   commentInner.append(commentHeader, commentBody);
-  commentDIV.append(commentInner);
-  commentsContainer.prepend(commentDIV);
+  commentWrapper.append(commentInner);
+  commentsContainer.prepend(commentWrapper);
+  const marker = document.createElement('span');
+  commentWrapper.append(marker);
 };
 
 const writeComment = async (e) => {
@@ -198,12 +200,13 @@ const commentEditBtn = document.querySelector('#commentEditBtn');
 const replyBtn = document.querySelector('#replyBtn');
 
 let commentID;
-let commentDIV;
+let commentWrapper;
 const askDeleteComment = (e) => {
   commentID =
     e.target.parentElement.parentElement.parentElement.parentElement.dataset
       .commentid;
-  commentDIV = e.target.parentElement.parentElement.parentElement.parentElement;
+  commentWrapper =
+    e.target.parentElement.parentElement.parentElement.parentElement;
   const modalWindow = document.createElement('div');
   modalWindow.id = 'modalWindow';
   modalWindow.className = 'modalWindow';
@@ -246,8 +249,8 @@ const deleteComment = async (e) => {
       body: JSON.stringify({ commentID }),
     });
     if (deleteCommentFetch.status === 200) {
-      commentDIV.remove();
-      console.log(commentDIV);
+      commentWrapper.remove();
+      console.log(commentWrapper);
       commentNumberSpan.innerHTML = Number(commentNumberSpan.innerHTML) - 1;
       articleCommentNumberSpan.innerHTML =
         Number(articleCommentNumberSpan.innerHTML) - 1;
@@ -307,26 +310,46 @@ const handleEditComment = (e) => {
   }
 };
 
+let replyState = false;
+
 const addReply = (e) => {
-  const commentDIV =
+  console.log('in add Reply Funtion', replyState);
+  if (replyState === true) {
+    if (
+      e.target.parentElement.parentElement.parentElement.nextElementSibling
+        .id === 'replyDIV'
+    ) {
+      e.target.parentElement.parentElement.parentElement.nextElementSibling.remove();
+      replyState = false;
+    } else {
+      replyState = true;
+    }
+    updateReplyBtns();
+    return;
+  }
+
+  const nestSibling =
+    e.target.parentElement.parentElement.parentElement.nextElementSibling;
+  const commentWrapper =
     e.target.parentElement.parentElement.parentElement.parentElement;
   const replyDIV = document.createElement('div');
   replyDIV.id = 'replyDIV';
   replyDIV.innerHTML = `
-  <form id="replyForm">
-  <input type="text" placeholder="Write a reply">
-  <button>Reply</button>
-  </form>
-  `;
-  commentDIV.append(replyDIV);
+        <form id="replyForm">
+        <input type="text" placeholder="Write a reply">
+        <button>Reply</button>
+        </form>
+        `;
+  commentWrapper.insertBefore(replyDIV, nestSibling);
   const replyBtn = document.querySelector('#replyForm');
+  replyState = true;
   replyBtn.addEventListener('submit', async (e) => {
     e.preventDefault();
     try {
       let articleID = window.location.href.split('/');
       articleID = articleID[articleID.length - 1];
       const replyFetch = await fetch(
-        `/community/nestComments/${commentDIV.dataset.commentid}`,
+        `/community/nestComments/${commentWrapper.dataset.commentid}`,
         {
           method: 'POST',
           headers: { 'Content-Type': 'Application/json' },
@@ -334,6 +357,7 @@ const addReply = (e) => {
         }
       );
       if (replyFetch.status === 200) {
+        replyState = false;
         const time = createdAt(Math.floor(new Date().getTime() / (1000 * 60)));
         let nestCommentID = await replyFetch.json();
         nestCommentID = nestCommentID.nestCommentID;
@@ -360,9 +384,12 @@ const addReply = (e) => {
         </div>
         </div>
         `;
-        commentDIV.append(nestCommentWrapper);
+        commentWrapper.insertBefore(nestCommentWrapper, nestSibling);
         replyDIV.remove();
         updateNestDeleteBtns();
+        commentNumberSpan.innerHTML = Number(commentNumberSpan.innerHTML) + 1;
+        articleCommentNumberSpan.innerHTML =
+          Number(articleCommentNumberSpan.innerHTML) + 1;
       }
     } catch (error) {
       console.log(error);
@@ -396,6 +423,12 @@ const deleteNestComment = async (e) => {
         }),
       }
     );
+    if (deleteNestFetch.status === 200) {
+      articleCommentNumberSpan.innerHTML =
+        Number(articleCommentNumberSpan.innerHTML) - 1;
+      commentNumberSpan.innerHTML = Number(commentNumberSpan.innerHTML) - 1;
+      nestParentEl.remove();
+    }
   } catch (error) {
     console.log(error);
   }
@@ -403,9 +436,12 @@ const deleteNestComment = async (e) => {
 
 const updateReplyBtns = () => {
   commentReplyBtns = document.querySelectorAll('#replyBtn');
-  console.log(commentReplyBtns);
   commentReplyBtns.forEach((commentReplyBtn) => {
-    commentReplyBtn.addEventListener('click', addReply);
+    if (replyState === true) {
+      return;
+    } else {
+      commentReplyBtn.addEventListener('click', addReply);
+    }
   });
 };
 

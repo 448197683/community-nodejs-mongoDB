@@ -69,16 +69,27 @@ export const getArticleController = async (req, res) => {
       .find({ articleId: String(req.params.id) })
       .sort({ _id: -1 })
       .toArray();
+
+    let nestCommentsNum = 0;
     comments.forEach((comment) => {
-      comment.createdAt = createdAt(comment.createdAt);
       if (comment.nestComments) {
+        comment.createdAt = createdAt(comment.createdAt);
+        nestCommentsNum = nestCommentsNum + comment.nestComments.length;
         comment.nestComments.forEach((nest) => {
           nest.createdAt = createdAt(nest.createdAt);
         });
       }
     });
-
-    return res.status(200).render('article.ejs', { data: post, comments });
+    const totalCommentNumber = comments.length + nestCommentsNum;
+    const updateCommunity = await db.collection('community').updateOne(
+      { _id: Number(req.params.id) },
+      {
+        $set: { totalCommentNumber },
+      }
+    );
+    return res
+      .status(200)
+      .render('article.ejs', { data: post, comments, totalCommentNumber });
   } catch (error) {
     console.log(error);
   }
@@ -175,6 +186,7 @@ export const addCommentController = async (req, res) => {
 
 export const deleteCommentController = async (req, res) => {
   const commentID = new ObjectId(req.body.commentID);
+
   try {
     const deleteCommentInArticle = await db.collection('community').updateOne(
       { _id: Number(req.params.articleID) },
@@ -182,9 +194,22 @@ export const deleteCommentController = async (req, res) => {
         $pull: { comments: commentID },
       }
     );
+
+    /* const comment = await db.collection('comments').findOne({ _id: commentID });
+    if (comment.nestComments) {
+      comment.nestComments.forEach(async (nest) => {
+        await db.collection('nestcomments').deleteOne({ _id: nest.nestid });
+      });
+    } */
+    /* =============  DELETE MANY ============ */
+    const deleteNest = await db
+      .collection('nestcomments')
+      .deleteMany({ commentID: req.body.commentID });
+
     const deleteComment = await db
       .collection('comments')
       .deleteOne({ _id: commentID });
+
     return res.status(200).end();
   } catch (error) {
     console.log(error);
@@ -218,15 +243,20 @@ export const postnestCommentController = async (req, res) => {
     const nestToComment = await db.collection('comments').updateOne(
       { _id: new ObjectId(req.params.commentID) },
       {
-        $addToSet: {
+        $push: {
           nestComments: {
-            nestid: saveNestComment.insertedId,
-            content: req.body.content,
-            owner: req.session.user.nickname,
-            createdAt: Math.floor(new Date().getTime() / (1000 * 60)),
-            commentID: req.params.commentID,
-            articleID: req.body.articleID,
-            avatarURL: req.session.user.avatarURL,
+            $each: [
+              {
+                nestid: saveNestComment.insertedId,
+                content: req.body.content,
+                owner: req.session.user.nickname,
+                createdAt: Math.floor(new Date().getTime() / (1000 * 60)),
+                commentID: req.params.commentID,
+                articleID: req.body.articleID,
+                avatarURL: req.session.user.avatarURL,
+              },
+            ],
+            $sort: { nestid: -1 },
           },
         },
       }
@@ -257,6 +287,7 @@ export const deleteNestCommentController = async (req, res) => {
     const deleteNest = await db
       .collection('nestcomments')
       .deleteOne({ _id: new ObjectId(nestID) });
+    return res.status(200).end();
   } catch (error) {
     console.log(error);
   }
