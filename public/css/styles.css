@@ -334,6 +334,28 @@ body {
     background-color: red; }
 
 /* COMMUNITY */
+.pageNation {
+  display: flex;
+  align-items: center;
+  position: fixed;
+  bottom: 20px; }
+  .pageNation button {
+    border: none;
+    outline: none;
+    background-color: crimson;
+    padding: 10px;
+    border-radius: 10px;
+    color: white;
+    margin-left: 20px; }
+  .pageNation ul {
+    list-style: none;
+    display: flex; }
+    .pageNation ul li {
+      border: 1px solid black;
+      padding: 7px; }
+    .pageNation ul a {
+      color: black; }
+
 /* Write a Article */
 .formWrapper {
   display: flex;

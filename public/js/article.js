@@ -27,6 +27,8 @@ const isLoggedIn = userData.dataset.loginstate;
 let goodState = false;
 let badState = false;
 let editCommentState = false;
+let replyState = false;
+let addCommentState = false;
 
 const createdAt = (oldTime) => {
   const currentTime = Math.floor(new Date().getTime() / (1000 * 60));
@@ -57,11 +59,16 @@ const handleEdit = (e) => {
 };
 
 const addComment = (e) => {
+  addCommentState = true;
+  if (replyState === true || editCommentState === true) {
+    return;
+  }
   commentForm.hidden = false;
   commentEditBtns.hidden = true;
 };
 
 const cancelComment = (e) => {
+  addCommentState = false;
   e.preventDefault();
   commentForm.hidden = true;
   commentEditBtns.hidden = false;
@@ -104,12 +111,16 @@ const createComment = (content, time, newID) => {
   commentsContainer.prepend(commentWrapper);
   const marker = document.createElement('span');
   commentWrapper.append(marker);
+  commentWrapper.dataset.nestnumbers = '0';
+  console.log(commentWrapper);
 };
 
 const writeComment = async (e) => {
+  console.log(e.target);
   if (textArea.value === '') {
     return;
   }
+  addCommentState = false;
   e.preventDefault();
   try {
     const commentFetch = await fetch(
@@ -241,7 +252,6 @@ const askDeleteComment = (e) => {
 const deleteComment = async (e) => {
   let articleID = window.location.href.split('/');
   articleID = articleID[articleID.length - 1];
-  console.log(articleID);
   try {
     const deleteCommentFetch = await fetch(`/community/comments/${articleID}`, {
       method: 'DELETE',
@@ -250,10 +260,14 @@ const deleteComment = async (e) => {
     });
     if (deleteCommentFetch.status === 200) {
       commentWrapper.remove();
-      console.log(commentWrapper);
-      commentNumberSpan.innerHTML = Number(commentNumberSpan.innerHTML) - 1;
+      commentNumberSpan.innerHTML =
+        Number(commentNumberSpan.innerHTML) -
+        1 -
+        Number(commentWrapper.dataset.nestnumbers);
       articleCommentNumberSpan.innerHTML =
-        Number(articleCommentNumberSpan.innerHTML) - 1;
+        Number(articleCommentNumberSpan.innerHTML) -
+        1 -
+        Number(commentWrapper.dataset.nestnumbers);
       commentID = '';
     }
   } catch (error) {
@@ -263,13 +277,15 @@ const deleteComment = async (e) => {
 
 let currentEditCommentID;
 const handleEditComment = (e) => {
-  console.log(e.target.parentElement.parentElement.parentElement.parentElement);
+  if (addCommentState === true || replyState === true) {
+    return;
+  }
   const commentBody = e.target.parentElement.parentElement.nextElementSibling;
   const commentID =
     e.target.parentElement.parentElement.parentElement.parentElement.dataset
       .commentid;
-  console.log(commentID);
   if (editCommentState === false) {
+    commentBtn.disabled = true;
     currentEditCommentID =
       e.target.parentElement.parentElement.parentElement.parentElement.dataset
         .commentid;
@@ -305,15 +321,17 @@ const handleEditComment = (e) => {
     });
   } else if (editCommentState === true && commentID === currentEditCommentID) {
     editCommentState = false;
+    commentBtn.disabled = false;
     const value = document.querySelector('#editCommentInput').value;
     commentBody.innerHTML = value;
   }
 };
 
-let replyState = false;
-
 const addReply = (e) => {
-  console.log('in add Reply Funtion', replyState);
+  commentBtn.disabled = true;
+  if (editCommentState === true || addCommentState === true) {
+    return;
+  }
   if (replyState === true) {
     if (
       e.target.parentElement.parentElement.parentElement.nextElementSibling
@@ -321,6 +339,7 @@ const addReply = (e) => {
     ) {
       e.target.parentElement.parentElement.parentElement.nextElementSibling.remove();
       replyState = false;
+      commentBtn.disabled = false;
     } else {
       replyState = true;
     }
@@ -332,6 +351,7 @@ const addReply = (e) => {
     e.target.parentElement.parentElement.parentElement.nextElementSibling;
   const commentWrapper =
     e.target.parentElement.parentElement.parentElement.parentElement;
+  const commentInner = e.target.parentElement.parentElement.parentElement;
   const replyDIV = document.createElement('div');
   replyDIV.id = 'replyDIV';
   replyDIV.innerHTML = `
@@ -357,6 +377,7 @@ const addReply = (e) => {
         }
       );
       if (replyFetch.status === 200) {
+        commentBtn.disabled = false;
         replyState = false;
         const time = createdAt(Math.floor(new Date().getTime() / (1000 * 60)));
         let nestCommentID = await replyFetch.json();
@@ -384,12 +405,16 @@ const addReply = (e) => {
         </div>
         </div>
         `;
+        Number(commentInner.dataset.nestnumber) + 1;
         commentWrapper.insertBefore(nestCommentWrapper, nestSibling);
         replyDIV.remove();
         updateNestDeleteBtns();
         commentNumberSpan.innerHTML = Number(commentNumberSpan.innerHTML) + 1;
         articleCommentNumberSpan.innerHTML =
           Number(articleCommentNumberSpan.innerHTML) + 1;
+        commentWrapper.dataset.nestnumbers =
+          Number(commentWrapper.dataset.nestnumbers) + 1;
+        console.log(commentWrapper.dataset.nestnumbers);
       }
     } catch (error) {
       console.log(error);
@@ -397,7 +422,6 @@ const addReply = (e) => {
   });
 };
 
-/* ============================================================================== */
 const deleteNestComment = async (e) => {
   e.preventDefault();
   const nestParentEl =
@@ -405,10 +429,6 @@ const deleteNestComment = async (e) => {
   const commentID =
     e.target.parentElement.parentElement.parentElement.parentElement
       .parentElement.dataset.commentid;
-  console.log(
-    e.target.parentElement.parentElement.parentElement.parentElement
-      .parentElement
-  );
   const url = window.location.href.split('/');
   const articleID = url[url.length - 1];
   try {
@@ -427,6 +447,12 @@ const deleteNestComment = async (e) => {
       articleCommentNumberSpan.innerHTML =
         Number(articleCommentNumberSpan.innerHTML) - 1;
       commentNumberSpan.innerHTML = Number(commentNumberSpan.innerHTML) - 1;
+      const commentWrapper =
+        e.target.parentElement.parentElement.parentElement.parentElement
+          .parentElement;
+      commentWrapper.dataset.nestnumbers =
+        Number(commentWrapper.dataset.nestnumbers) - 1;
+
       nestParentEl.remove();
     }
   } catch (error) {
@@ -461,7 +487,6 @@ const updateDeleteBtns = () => {
 
 const updateNestDeleteBtns = () => {
   nestCommentDeleteBtns = document.querySelectorAll('#nestCommentDeleteBtn');
-  console.log(nestCommentDeleteBtns);
   nestCommentDeleteBtns.forEach((nestCommentDeleteBtn) => {
     nestCommentDeleteBtn.addEventListener('click', deleteNestComment);
   });

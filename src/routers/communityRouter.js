@@ -19,7 +19,7 @@ import { loginOnly, logoutOnly } from '../middleware/middleware.js';
 
 export const communityRouter = express.Router();
 
-communityRouter.get('/community', communityController);
+communityRouter.get('/community/:page', communityController);
 communityRouter.get('/writeArticle', loginOnly, getWriteAritcleController);
 communityRouter.post('/writeArticle', loginOnly, postWriteAritcleController);
 communityRouter.get('/article/:id', getArticleController);

@@ -2,10 +2,14 @@ import { db, counter } from '../db.js';
 import { ConnectionCheckOutStartedEvent, ObjectId } from 'mongodb';
 
 export const communityController = async (req, res) => {
+  console.log(req.params.page);
+  const page = req.params.page;
   try {
     const findCommunity = await db
       .collection('community')
       .find()
+      .limit(5)
+      .skip(5 * (Number(page) - 1))
       .sort({ _id: -1 })
       .toArray();
     findCommunity.forEach((article) => {
@@ -34,6 +38,7 @@ export const postWriteAritcleController = async (req, res) => {
       good: 0,
       bad: 0,
       views: 0,
+      nestNumbers: 0,
     });
     counter.count = counter.count + 1;
     const updateCounter = await db.collection('counter').updateOne(
@@ -72,8 +77,8 @@ export const getArticleController = async (req, res) => {
 
     let nestCommentsNum = 0;
     comments.forEach((comment) => {
+      comment.createdAt = createdAt(comment.createdAt);
       if (comment.nestComments) {
-        comment.createdAt = createdAt(comment.createdAt);
         nestCommentsNum = nestCommentsNum + comment.nestComments.length;
         comment.nestComments.forEach((nest) => {
           nest.createdAt = createdAt(nest.createdAt);
@@ -81,12 +86,6 @@ export const getArticleController = async (req, res) => {
       }
     });
     const totalCommentNumber = comments.length + nestCommentsNum;
-    const updateCommunity = await db.collection('community').updateOne(
-      { _id: Number(req.params.id) },
-      {
-        $set: { totalCommentNumber },
-      }
-    );
     return res
       .status(200)
       .render('article.ejs', { data: post, comments, totalCommentNumber });
@@ -261,6 +260,15 @@ export const postnestCommentController = async (req, res) => {
         },
       }
     );
+    const nestNumbers = await db.collection('community').updateOne(
+      { _id: Number(req.body.articleID) },
+      {
+        $inc: {
+          nestNumbers: +1,
+        },
+      }
+    );
+    console.log(nestNumbers);
     return res.status(200).end(
       JSON.stringify({
         nestCommentID: saveNestComment.insertedId,
@@ -287,6 +295,14 @@ export const deleteNestCommentController = async (req, res) => {
     const deleteNest = await db
       .collection('nestcomments')
       .deleteOne({ _id: new ObjectId(nestID) });
+    const nestNumbers = await db.collection('community').updateOne(
+      { _id: Number(req.params.articleID) },
+      {
+        $inc: {
+          nestNumbers: -1,
+        },
+      }
+    );
     return res.status(200).end();
   } catch (error) {
     console.log(error);

@@ -2,6 +2,7 @@
 <html lang="en">
   <head>
     <%- include("./components/HEAD.ejs")%>
+    <script defer src="/public/js/community.js"></script>
     <title>Code:Me COMMUNITY</title>
   </head>
   <body>
@@ -14,7 +15,14 @@
         include("./components/POST.ejs",{data})%> <%})%>
       </ul>
       <div class="pageNation">
-        1 2 3 4 <%if(locals.isLoggedIn===true){%>
+        <ul>
+          <li id="prePageBtn">PREV</li>
+          <%for(let i = 1 ; i<=5;i++){%>
+          <a href="/community/community/<%=i%>"><li><%=i%></li></a>
+          <%}%>
+          <li id="nextPageBtn">NEXT</li>
+        </ul>
+        <%if(locals.isLoggedIn===true){%>
         <a href="/community/writeArticle"><button>Write a Post</button></a>
         <%}else{%>
         <a href="/user/login"><button>Write a Post</button></a>
