@@ -9,16 +9,24 @@
     <%- include("./components/NAVBAR.ejs") %>
     <div class="container">
       <h2>Community</h2>
-      <div>sort by : New Popular</div>
+      <div id="sortDIV">
+        sort by
+        <a href="#" id="sortNewA"> <button id="sortNewBtn">New</button></a>
+        <a href="#" id="sortPopularA">
+          <button id="sortPopularBtn">Popular</button></a
+        >
+      </div>
       <ul class="articleWrapper">
         <%locals.datas.forEach((data)=>{ %> <%-
         include("./components/POST.ejs",{data})%> <%})%>
       </ul>
-      <div class="pageNation">
+      <div class="pageNation" data-totalpage="<%=locals.totalPage%>">
         <ul>
           <li id="prePageBtn">PREV</li>
-          <%for(let i = 1 ; i<=5;i++){%>
-          <a href="/community/community/<%=i%>"><li><%=i%></li></a>
+          <%for(let i = 1 ; i<=locals.totalPage;i++){%>
+          <a href="/community/community/<%=i%>"
+            ><li class="pageLI"><%=i%></li></a
+          >
           <%}%>
           <li id="nextPageBtn">NEXT</li>
         </ul>

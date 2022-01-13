@@ -2,9 +2,9 @@ import { db, counter } from '../db.js';
 import { ConnectionCheckOutStartedEvent, ObjectId } from 'mongodb';
 
 export const communityController = async (req, res) => {
-  console.log(req.params.page);
   const page = req.params.page;
   try {
+    const community = await db.collection('community').find().toArray();
     const findCommunity = await db
       .collection('community')
       .find()
@@ -16,7 +16,35 @@ export const communityController = async (req, res) => {
       const time = createdAt(article.createdAt);
       article.time = time;
     });
-    res.status(200).render('community.ejs', { datas: findCommunity });
+    const totalPage = Math.ceil(community.length / 5);
+    res
+      .status(200)
+      .render('community.ejs', { datas: findCommunity, totalPage });
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+export const sortNewController = async (req, res) => {
+  console.log(req.params);
+  const page = req.params.page;
+  try {
+    const community = await db.collection('community').find().toArray();
+    const findCommunity = await db
+      .collection('community')
+      .find()
+      .limit(5)
+      .skip(5 * (Number(page) - 1))
+      .sort({ _id: -1 })
+      .toArray();
+    findCommunity.forEach((article) => {
+      const time = createdAt(article.createdAt);
+      article.time = time;
+    });
+    const totalPage = Math.ceil(community.length / 5);
+    res
+      .status(200)
+      .render('community.ejs', { datas: findCommunity, totalPage });
   } catch (error) {
     console.log(error);
   }
@@ -47,7 +75,7 @@ export const postWriteAritcleController = async (req, res) => {
         $set: { count: counter.count },
       }
     );
-    res.status(300).redirect(`/community/community`);
+    res.status(300).redirect(`/community/community/1`);
   } catch (error) {
     console.log(error);
   }
@@ -216,7 +244,6 @@ export const deleteCommentController = async (req, res) => {
 };
 
 export const putCommentController = async (req, res) => {
-  console.log(req.params, req.body);
   try {
     const editComment = await db.collection('comments').updateOne(
       { _id: new ObjectId(req.params.commentID) },
@@ -268,7 +295,6 @@ export const postnestCommentController = async (req, res) => {
         },
       }
     );
-    console.log(nestNumbers);
     return res.status(200).end(
       JSON.stringify({
         nestCommentID: saveNestComment.insertedId,
@@ -280,7 +306,6 @@ export const postnestCommentController = async (req, res) => {
 };
 
 export const deleteNestCommentController = async (req, res) => {
-  console.log(req.body, req.params);
   const articleID = req.params.articleID;
   const { commentID, nestID } = req.body;
   try {

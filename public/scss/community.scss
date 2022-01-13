@@ -1,4 +1,10 @@
 /* COMMUNITY */
+#sortDIV {
+  background-color: red;
+  width: 80%;
+  margin-bottom: 10px;
+}
+
 .pageNation {
   display: flex;
   align-items: center;
@@ -16,9 +22,17 @@
   ul {
     list-style: none;
     display: flex;
+    border-radius: 10px;
+    border: 1px solid black;
+    overflow: hidden;
     li {
-      border: 1px solid black;
       padding: 7px;
+      cursor: pointer;
+      background-color: lightblue;
+    }
+    .pageLI {
+      border-left: 1px solid black;
+      border-right: 1px solid black;
     }
     a {
       color: black;

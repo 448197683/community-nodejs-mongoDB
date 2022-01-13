@@ -13,6 +13,7 @@ import {
   putCommentController,
   postnestCommentController,
   deleteNestCommentController,
+  sortNewController,
 } from '../controllers/communityController';
 
 import { loginOnly, logoutOnly } from '../middleware/middleware.js';
@@ -20,6 +21,7 @@ import { loginOnly, logoutOnly } from '../middleware/middleware.js';
 export const communityRouter = express.Router();
 
 communityRouter.get('/community/:page', communityController);
+communityRouter.get('/newSort/:page', sortNewController);
 communityRouter.get('/writeArticle', loginOnly, getWriteAritcleController);
 communityRouter.post('/writeArticle', loginOnly, postWriteAritcleController);
 communityRouter.get('/article/:id', getArticleController);

@@ -34,7 +34,7 @@ const handleDelete = async (e) => {
       method: 'DELETE',
     });
     if (deleteFetch.status === 200) {
-      return window.location.replace('/community/community');
+      return window.location.replace('/community/community/1');
     }
   } catch (error) {
     console.log(error);
