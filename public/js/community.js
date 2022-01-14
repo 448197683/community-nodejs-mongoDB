@@ -2,12 +2,10 @@ const prePageBtn = document.querySelector('#prePageBtn');
 const nextPageBtn = document.querySelector('#nextPageBtn');
 const pageNation = document.querySelector('.pageNation');
 const pageLIs = document.querySelectorAll('.pageLI');
-const sortNewBtn = document.querySelector('#sortNewBtn');
 
 const totalPage = Number(pageNation.dataset.totalpage);
 
 let currentPage;
-let newSortState = false;
 
 const pageID = () => {
   currentPage = window.location.href.split('/');
@@ -36,36 +34,19 @@ const handleNextPage = async (e) => {
     return;
   }
   try {
-    if (newSortState === false) {
-      const nextPageFetch = await fetch(
-        `/community/community/${currentPage + 1}`
-      );
-      if (nextPageFetch.status === 200) {
-        window.location.replace(`/community/community/${currentPage + 1}`);
-      }
-    } else {
-      const nextPageFetch = await fetch(
-        `/community/newSort/${currentPage + 1}`
-      );
-      if (nextPageFetch.status === 200) {
-        window.location.replace(`/community/newSort/${currentPage + 1}`);
-      }
+    const nextPageFetch = await fetch(
+      `/community/community/${currentPage + 1}`
+    );
+    if (nextPageFetch.status === 200) {
+      window.location.replace(`/community/community/${currentPage + 1}`);
     }
   } catch (error) {
     console.log(error);
   }
 };
 
-/* ============前端 get请求================== */
-const handleSortNew = (e) => {
-  newSortState = true;
-  const sortNewA = document.querySelector('#sortNewA');
-  sortNewA.href = `/community/newSort/1`;
-};
-
 prePageBtn.addEventListener('click', handlePrePage);
 nextPageBtn.addEventListener('click', handleNextPage);
-sortNewBtn.addEventListener('click', handleSortNew);
 
 const init = () => {
   pageID();

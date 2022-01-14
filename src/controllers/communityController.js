@@ -25,26 +25,27 @@ export const communityController = async (req, res) => {
   }
 };
 
-export const sortNewController = async (req, res) => {
-  console.log(req.params);
-  const page = req.params.page;
+export const searchController = async (req, res) => {
+  const query = req.query.search;
   try {
-    const community = await db.collection('community').find().toArray();
-    const findCommunity = await db
+    const results = await db
       .collection('community')
-      .find()
-      .limit(5)
-      .skip(5 * (Number(page) - 1))
-      .sort({ _id: -1 })
+      .find({
+        $or: [
+          { title: { $regex: query, $options: 'i' } },
+          { content: { $regex: query, $options: 'i' } },
+          { owner: { $regex: query, $options: 'i' } },
+        ],
+      })
       .toArray();
-    findCommunity.forEach((article) => {
+    results.forEach((article) => {
       const time = createdAt(article.createdAt);
       article.time = time;
     });
-    const totalPage = Math.ceil(community.length / 5);
-    res
-      .status(200)
-      .render('community.ejs', { datas: findCommunity, totalPage });
+    res.status(200).render('serach.ejs', {
+      datas: results,
+    });
+    console.log(results);
   } catch (error) {
     console.log(error);
   }
