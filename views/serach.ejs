@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <%- include("./components/HEAD.ejs")%>
+    <title>Code:Me Serach Results</title>
+  </head>
+  <body>
+    <%- include("./components/NAVBAR.ejs") %>
+    <div class="container">
+      <h2>Serach Results (<%=datas.length%>)</h2>
+      <ul class="articleWrapper">
+        <%locals.datas.forEach((data)=>{ %> <%-
+        include("./components/POST.ejs",{data})%> <%})%>
+      </ul>
+    </div>
+  </body>
+</html>
